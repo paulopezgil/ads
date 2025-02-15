@@ -28,7 +28,6 @@ int valueTerm(List *lp, double *a, double *b, int sign)
     if (acceptIdentifier(lp))
     {
         /* If at this point result = 0, then readNum = 1 (e.g. case x^4)*/
-
         /* First case: exponentiated variable (e.g. 2x^4)*/
         if (acceptCharacter(lp, '^'))
         {
@@ -46,7 +45,7 @@ int valueTerm(List *lp, double *a, double *b, int sign)
         }
         
         /* Second case: 1st degree variable (e.g. 3x)*/
-        *a += readNum * sign; 
+        *b += readNum * sign; 
         return 1;
     }
 
