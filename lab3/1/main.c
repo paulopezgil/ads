@@ -1,4 +1,6 @@
 #include "lpm.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 int main()
 {
@@ -11,9 +13,9 @@ int main()
 
     /* For each requested IP adress, print its longest prefix matching id */
     for (int pos = 0; pos != m; ++pos)
-        printf("%d\n", matchingId(ip[pos]), sn, n);
+        printf("%d\n", matchingId(ip[pos], sn, n));
 
-    /* free the arrays of subnets and ips */
+    /* free the arrays */
     free(sn);
     free(ip);
 }

@@ -12,6 +12,6 @@ typedef struct Subnet
 
 void readInput(int *n, int *m, Subnet **sn, IpAddress **ip);
 int transformIp(IpAddress ip, int mask);
-int matchingId(IpAdress ip, Subnet *sn, int n);
+int matchingId(IpAddress ip, Subnet *sn, int n);
 
 #endif
