@@ -18,7 +18,8 @@ int main()
     for (int pos = 0; pos != m; ++pos)
         printf("%d\n", matchingId(ip[pos], tr));
 
-    /* free the arrays */
+    /* free the arrays and the trie */
     free(sn);
     free(ip);
+    freeTrie(tr);
 }
