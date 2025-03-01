@@ -6,11 +6,11 @@ int matchingId(IpAddress ip, Subnet *sn, int n)
 
     for (int pos = 0; pos != n; ++pos)
     {
-        /* store current mask for efficiency*/
+        /* store current mask for efficiency */
         int mask = sn[pos].mask;
 
         /* check if the 2 IPs match and if the mask is the greatest matching one found */
-        if ((transformIp(ip, mask) == transformIp(sn[pos].ip, mask)) && (maxMask < mask))
+        if ((transformIp(ip, mask) == transformIp(sn[pos].ip, mask)) && (maxMask <= mask))
         {
             matchId = sn[pos].id;
             maxMask = mask;

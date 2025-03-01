@@ -4,9 +4,9 @@
 
 int main()
 {
-    int n, m;       /* the number of subnets and ips*/
+    int n, m;       /* the number of subnets and ips */
     Subnet *sn;     /* an array of subnets */
-    IpAddress *ip;  /* an array of ips*/
+    IpAddress *ip;  /* an array of ips */
 
     /* Read from the standard input*/
     readInput(&n, &m, &sn, &ip);
