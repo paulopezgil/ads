@@ -56,7 +56,7 @@ int matchingId(IpAddress ip, Trie tr)
     /* visit the nodes following the binary representation of intIp */
     for (int bit = 31; tr != NULL; --bit)
     {
-        /* if tr.id != -1 then a subnet matches the ip */
+        /* if tr->id != -1 then a subnet matches the ip */
         if (tr->id != -1)
             lpmId = tr->id;
 

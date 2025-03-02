@@ -38,6 +38,6 @@ int transformIp(IpAddress ip, int mask)
     result |= (ip[2] << 8);
     result |= ip[3];
 
-    /* All the bits greater than mask are 0 */
+    /* All the bits smaller than mask are 0 */
     return result & (0xFFFFFFFF << (32 - mask));
 }
