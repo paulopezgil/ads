@@ -1,7 +1,7 @@
 # ignore executables
 *.o
 *.exe
-*.out
+a.out
 
 # ignore files with no extension
 *
