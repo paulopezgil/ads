@@ -3,7 +3,6 @@
 #define MAX_LENGTH 61
 
 
-
 typedef struct TreeNode *Tree;
 typedef char Name[MAX_LENGTH];
 
@@ -31,12 +30,14 @@ typedef struct Path {
 } Path;
 
 
-Tree createTree();
-Tree findRoot(Tree tr);
-void freeTree(Tree root);
-
+Tree createFile(Tree tr, Name filename, InodeType type);
 Path createPath(int length);
+Tree createTree(Tree parent, Name name, InodeType inT);
+Tree findNode(Tree tr, Name nodeName);
+Tree findRoot(Tree tr);
 void freePath(Path pt);
+void freeTree(Tree root);
+void printContent(Tree tr, Path pt);
 
 
 #endif
