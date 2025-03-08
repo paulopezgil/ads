@@ -1,10 +1,14 @@
-#ifndef FILE_HH
-#define FILE_HH
-#define MAX_LENGTH 61
+#ifndef FILE_H
+#define FILE_H
+#define MAX_SIZE 61
 
+
+#ifndef NAME
+#define NAME
+typedef char Name[MAX_SIZE];
+#endif
 
 typedef struct TreeNode *Tree;
-typedef char Name[MAX_LENGTH];
 
 typedef enum InodeType {
     Folder,
@@ -24,20 +28,11 @@ typedef struct TreeNode {
     int size;
 } TreeNode;
 
-typedef struct Path {
-    Name *component;
-    int length;
-} Path;
-
-
 Tree createFile(Tree tr, Name filename, InodeType type);
-Path createPath(int length);
 Tree createTree(Tree parent, Name name, InodeType inT);
 Tree findNode(Tree tr, Name nodeName);
 Tree findRoot(Tree tr);
-void freePath(Path pt);
 void freeTree(Tree root);
-void printContent(Tree tr, Path pt);
 
 
 #endif

@@ -1,0 +1,49 @@
+#include "console.h"
+#include "commands.h"
+#include "path.h"
+#include <string.h>
+#include <stdio.h>
+
+typedef enum Commands {
+    EXIT,
+    CD,
+    LS,
+    CAT,
+    FIND,
+    TOUCH,
+    ECHO,
+    MKDIR,
+    MV,
+    CP,
+    RM,
+    LN
+} Commands;
+
+int getCommand(char *command);
+void callExit(Tree *dir);
+void callCd(Tree *dir);
+void callLs(Tree *dir);
+void callCat(Tree *dir);
+void callFind(Tree *dir);
+void callTouch(Tree *dir);
+void callEcho(Tree *dir);
+void callMkdir(Tree *dir);
+void callMv(Tree *dir);
+void callCp(Tree *dir);
+void callRm(Tree *dir);
+void callLn(Tree *dir);
+
+void (*execute[12])(Tree *) = {
+    callExit,
+    callCd,
+    callLs,
+    callCat,
+    callFind,
+    callTouch,
+    callEcho,
+    callMkdir,
+    callMv,
+    callCp,
+    callRm,
+    callLn
+};
