@@ -34,7 +34,8 @@ int getCommandId(char *command)
 
 void callExit(Tree *dir)
 {
-
+    freeTree(findRoot(*dir));
+    exit(1);
 }
 
 void callCd(Tree *dir)
@@ -45,22 +46,25 @@ void callCd(Tree *dir)
 
 void callLs(Tree *dir)
 {
-
+    Path pt = readPath();
+    ls(*dir, pt);
 }
 
 void callCat(Tree *dir)
 {
-
+    Path pt = readPath();
+    cat(*dir, pt);
 }
 
 void callFind(Tree *dir)
 {
-
+    find(*dir);
 }
 
 void callTouch(Tree *dir)
 {
-
+    Path pt = readPath();
+    touch(*dir, pt);
 }
 
 void callEcho(Tree *dir)
@@ -70,7 +74,8 @@ void callEcho(Tree *dir)
 
 void callMkdir(Tree *dir)
 {
-
+    Path pt = readPath();
+    mkdir(*dir, pt);
 }
 
 void callMv(Tree *dir)
