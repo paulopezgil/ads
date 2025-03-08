@@ -1,13 +1,11 @@
 #include "console.ih"
 
-void callCd(Tree *dir)
+void executeCommand(char *name, Tree *dir)
 {
-    Path pt = readPath();
-    *dir = cd(*dir, pt);
+    execute[getCommandId(name)](dir);
 }
 
-
-int getCommand(char *command)
+int getCommandId(char *command)
 {
     if (strcmp(command, "exit") == 0)
         return EXIT;
@@ -34,22 +32,63 @@ int getCommand(char *command)
     return -1;
 }
 
-int readInput()
+void callExit(Tree *dir)
 {
-    /* initialize the file system */
-    Name firstName = "/";
-    Tree rootDir = createTree(NULL, firstName, Folder);
-    Tree currentDir = rootDir;
 
-    /* read all commands */
-    char name[6];
-    while (1)
-    {
-        /* get the command name */
-        scanf("%s", name);
-        int command = getCommand(name);
+}
 
-        /* call the corresponding command */
-        execute[command](&currentDir);
-    }
+void callCd(Tree *dir)
+{
+    Path pt = readPath();
+    cd(dir, pt);
+}
+
+void callLs(Tree *dir)
+{
+
+}
+
+void callCat(Tree *dir)
+{
+
+}
+
+void callFind(Tree *dir)
+{
+
+}
+
+void callTouch(Tree *dir)
+{
+
+}
+
+void callEcho(Tree *dir)
+{
+
+}
+
+void callMkdir(Tree *dir)
+{
+
+}
+
+void callMv(Tree *dir)
+{
+
+}
+
+void callCp(Tree *dir)
+{
+
+}
+
+void callRm(Tree *dir)
+{
+
+}
+
+void callLn(Tree *dir)
+{
+
 }

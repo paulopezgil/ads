@@ -1,8 +1,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
+#include "tree.h"
 
-
-int readInput();
-
+void executeCommand(char *name, Tree *dir);
 
 #endif

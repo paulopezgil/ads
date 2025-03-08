@@ -4,7 +4,7 @@
 #include "path.h"
 
 
-Tree cd(Tree tr, Path pt);
+void cd(Tree *tr, Path pt);
 void ls(Tree tr, Path pt);
 void cat(Tree tr, Path pt);
 void find(Tree tr);

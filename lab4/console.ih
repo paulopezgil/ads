@@ -19,7 +19,7 @@ typedef enum Commands {
     LN
 } Commands;
 
-int getCommand(char *command);
+int getCommandId(char *name);
 void callExit(Tree *dir);
 void callCd(Tree *dir);
 void callLs(Tree *dir);

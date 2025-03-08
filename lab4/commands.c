@@ -7,23 +7,21 @@
 
 ******************************************************************************/
 
-Tree cd(Tree tr, Path pt)
+void cd(Tree *tr, Path pt)
 {
     /* if no path is given, return the root */
     if (pt.size == 0)
-        return findRoot(tr);
+        *tr = findRoot(*tr);
 
     /* navigate through the path */
     for (int i = 0; i != pt.size; ++i)
-        tr = findNode(tr, pt.name[i]);
-
-    return tr;
+        *tr = findNode(*tr, pt.name[i]);
 }
 
 void ls(Tree tr, Path pt)
 {
     /* go to the specified path */
-    tr = cd(tr, pt);
+    cd(&tr, pt);
 
     /* print the name of it's childs */
     for (int i = 0; i != tr->size; ++i)
@@ -33,7 +31,7 @@ void ls(Tree tr, Path pt)
 void cat(Tree tr, Path pt)
 {
     /* go to the specified file */
-    tr = cd(tr, pt);
+    cd(&tr, pt);
 
     /* print the content of the file */
     printf("%s\n", tr->in.file);
@@ -85,7 +83,7 @@ void find(Tree tr)
 void touch(Tree tr, Path pt)
 {
     /* go to the specified directory */
-    tr = cd(tr, pt);
+    cd(&tr, pt);
 
     /* create the file using helper function */
     createFile(tr, pt.name[pt.size - 1], File);
@@ -94,7 +92,7 @@ void touch(Tree tr, Path pt)
 void echo(char *str, Tree tr, Path pt, char *(*mode)(char *, char const *))
 {
     /* go to the specified file */
-    tr = cd(tr, pt);
+    cd(&tr, pt);
 
     /* if the file does not exist, create it */
     if (tr->name != pt.name[pt.size - 1])

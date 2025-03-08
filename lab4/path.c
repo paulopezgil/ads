@@ -15,7 +15,7 @@ void appendName(Path *pt, Name name)
     pt->size += 1;
 }
 
-// create a new path with given capacity
+/* create a new path with given capacity */
 Path createPath(int capacity)
 {
     Path pt;
@@ -42,7 +42,7 @@ Path readPath()
         ungetc(readName[0], stdin);
 }
 
-// free a path
+/* free a path */
 void freePath(Path pt)
 {
     free(pt.name);
