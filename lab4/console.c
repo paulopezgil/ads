@@ -5,6 +5,11 @@ void executeCommand(char *name, Tree *dir)
     execute[getCommandId(name)](dir);
 }
 
+/**********************************************************************\
+*   The following functions parse the input from stdin, and call the   *
+*   appropiate methods with the scanned arguments                      *
+\**********************************************************************/
+
 int getCommandId(char *command)
 {
     if (strcmp(command, "exit") == 0)
@@ -40,20 +45,23 @@ void callExit(Tree *dir)
 
 void callCd(Tree *dir)
 {
-    Path pt = readPath();
-    cd(dir, pt);
+    Path *pt = NULL;
+    readPath(pt);
+    cd(dir, *pt);
 }
 
 void callLs(Tree *dir)
 {
-    Path pt = readPath();
-    ls(*dir, pt);
+    Path *pt = NULL;
+    readPath(pt);
+    ls(*dir, *pt);
 }
 
 void callCat(Tree *dir)
 {
-    Path pt = readPath();
-    cat(*dir, pt);
+    Path *pt = NULL;
+    readPath(pt);
+    cat(*dir, *pt);
 }
 
 void callFind(Tree *dir)
@@ -63,27 +71,34 @@ void callFind(Tree *dir)
 
 void callTouch(Tree *dir)
 {
-    Path pt = readPath();
-    touch(*dir, pt);
+    /* read the paths until '\n' is read */
+    Path pt;
+    while (readPath(&pt))
+    {
+        readPath(&pt);
+        touch(*dir, pt);
+    }
 }
 
 void callEcho(Tree *dir)
 {
-
+    //scanf(" \"%s\" > ");
 }
 
 /* we assume that the -p flag is always given*/
 void callMkdir(Tree *dir)
 {
-    Path pt = readPath();
-    mkdir(*dir, pt);
+    Path *pt = NULL;
+    readPath(pt);
+    mkdir(*dir, *pt);
 }
 
 void callMv(Tree *dir)
 {
-    Path pt1 = readPath();
-    Path pt2 = readPath();
-    mv(*dir, pt1, pt2);
+    Path *pt1 = NULL, *pt2 = NULL;
+    readPath(pt1);
+    readPath(pt2);
+    mv(*dir, *pt1, *pt2);
 }
 
 void callCp(Tree *dir)

@@ -6,8 +6,8 @@ void appendName(Path *pt, Name name)
     /* if the path is full, double it's capacity */
     if (pt->size == pt->capacity)
     {
-        pt->name = realloc(pt->name, 2 * pt->size * sizeof(Name));
         pt->capacity *= 2;
+        pt->name = realloc(pt->name, pt->capacity * sizeof(Name));
     }
 
     /* add the new name */
@@ -26,20 +26,39 @@ Path createPath(int capacity)
 }
 
 /* read a path from stdin */
-Path readPath()
+int readPath(Path *pt)
 {
-    Path pt = createPath(1);
-    Name readName;
+    /* reinitialize pt in case it was already initialized */
+    if (pt != NULL)
+        freePath(*pt);
+    *pt = createPath(1);
+    Name name;
 
     /* check if it's an absolute path */
-    readName[0] = getchar();
-    if (readName[0] == '/')
+    name[0] = getchar();
+    if (name[0] == '/')
     {
-        readName[1] = '\0';
-        appendName(&pt, readName);
+        name[1] = '\0';
+        appendName(pt, name);
     }
     else
-        ungetc(readName[0], stdin);
+        ungetc(name[0], stdin);
+
+    /* read all the path names */
+    char separator;
+    do {
+        /* read each name until a slash, space or line break is found */
+        scanf("%[^/ \n]", name);
+        appendName(pt, name);
+
+        /* if the separator is a space or a line break, stop */
+        separator = getchar();
+        if (separator == '\n')
+            return 0;
+    } while (separator != ' ');
+
+    /* the path is followed by a white space */
+    return 1;
 }
 
 /* free a path */

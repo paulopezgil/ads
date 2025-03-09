@@ -23,7 +23,7 @@ int main()
     while (1)
     {
         /* read and execute each command */
-        scanf("%s", name);
+        scanf("%s ", name);
         executeCommand(name, &currentDir);
     } 
 }
