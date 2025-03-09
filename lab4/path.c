@@ -28,10 +28,6 @@ Path createPath(int capacity)
 /* read a path from stdin */
 int readPath(Path *pt)
 {
-    /* reinitialize pt in case it was already initialized */
-    if (pt != NULL)
-        freePath(*pt);
-    *pt = createPath(1);
     Name name;
 
     /* check if it's an absolute path */

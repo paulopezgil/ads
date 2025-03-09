@@ -148,6 +148,6 @@ void cp(Tree tr, Path pt1, Path pt2)
         createFile(dir2, dir1->name, dir1->in->type);
 
     /* call helper function to copy the file */
-    copyTree(dir1, createFile(dir2, pt2.name[pt2.size], dir1->in->type));
+    copyTree(dir1, createFile(dir2, pt2.name[pt2.size - 1], dir1->in->type));
 }
 

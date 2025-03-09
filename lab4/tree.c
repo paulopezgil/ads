@@ -47,6 +47,10 @@ Tree createTree(Tree parent, Name name, InodeType type)
     
     /* create the Inode */
     tr->in = malloc(sizeof(Inode));
+    if (type == File)
+        tr->in->content.file = NULL;
+    else
+        tr->in->content.folder = NULL;
     tr->in->type = type;
     tr->in->size = 0;
     tr->in->refCount = 1;

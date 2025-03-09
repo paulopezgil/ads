@@ -73,23 +73,23 @@ void callExit(Tree *dir)
 
 void callCd(Tree *dir)
 {
-    Path *pt = NULL;
-    readPath(pt);
-    cd(dir, *pt);
+    Path pt = createPath(1);
+    readPath(&pt);
+    cd(dir, pt);
 }
 
 void callLs(Tree *dir)
 {
-    Path *pt = NULL;
-    readPath(pt);
-    ls(*dir, *pt);
+    Path pt = createPath(1);
+    readPath(&pt);
+    ls(*dir, pt);
 }
 
 void callCat(Tree *dir)
 {
-    Path *pt = NULL;
-    readPath(pt);
-    cat(*dir, *pt);
+    Path pt = createPath(1);
+    readPath(&pt);
+    cat(*dir, pt);
 }
 
 void callFind(Tree *dir)
@@ -100,9 +100,9 @@ void callFind(Tree *dir)
 void callTouch(Tree *dir)
 {
     /* read the paths until '\n' is read */
-    Path *pt = NULL;
-    while (readPath(pt))
-        touch(*dir, *pt);
+    Path pt = createPath(1);
+    while (readPath(&pt))
+        touch(*dir, pt);
 }
 
 void callEcho(Tree *dir)
@@ -124,11 +124,11 @@ void callEcho(Tree *dir)
     }
 
     /* read the path */
-    Path *pt = NULL;
-    readPath(pt);
+    Path pt = createPath(1);
+    readPath(&pt);
 
     /* call the appropiate version of echo */
-    echo(content, *dir, *pt, mode);
+    echo(content, *dir, pt, mode);
 }
 
 /* we assume that the -p flag is always given*/
@@ -140,9 +140,9 @@ void callMkdir(Tree *dir)
     getchar();
 
     /* read the paths until '\n' is read */
-    Path *pt = NULL;
-    while (readPath(pt))
-        mkdir(*dir, *pt);
+    Path pt = createPath(1);
+    while (readPath(&pt))
+        mkdir(*dir, pt);
 }
 
 void callMv(Tree *dir)
