@@ -44,21 +44,17 @@ int readPath(Path *pt)
     else
         ungetc(name[0], stdin);
 
-    /* read all the path names */
-    char separator;
-    do {
-        /* read each name until a slash, space or line break is found */
+    /* read each name until a slash, space or line break is found */
+    char separator = 'a';
+    while (separator != ' ' && separator != '\n')
+    {
         scanf("%[^/ \n]", name);
         appendName(pt, name);
-
-        /* if the separator is a space or a line break, stop */
         separator = getchar();
-        if (separator == '\n')
-            return 0;
-    } while (separator != ' ');
+    }
 
-    /* the path is followed by a white space */
-    return 1;
+    /* return 1 if the separator is ' ' and 0 if it's '\n' */
+    return separator == ' ';
 }
 
 /* free a path */

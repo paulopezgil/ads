@@ -1,5 +1,6 @@
 #include "console.h"
 #include "commands.h"
+#include "tree.h"
 #include "path.h"
 #include <string.h>
 #include <stdio.h>
@@ -21,6 +22,7 @@ typedef enum Commands {
 } Commands;
 
 int getCommandId(char *name);
+char *readString(char delimiter);
 void callExit(Tree *dir);
 void callCd(Tree *dir);
 void callLs(Tree *dir);
