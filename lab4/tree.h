@@ -14,25 +14,32 @@ typedef enum InodeType {
     File
 } InodeType;
 
-typedef union Inode {
+typedef union InodeContent {
     Tree *folder;   /* an array of child nodes */
     char *file;     /* an array of characters */
+} InodeContent;
+
+typedef struct Inode {
+    InodeType type;
+    InodeContent content;
+    int size;
+    int refCount;
 } Inode;
 
 typedef struct TreeNode {
     Tree parent;
     Name name;
-    InodeType inT;
-    Inode in;
-    int size;
+    Inode *in;    
 } TreeNode;
 
-Tree createFile(Tree tr, Name filename, InodeType type);
-Tree createTree(Tree parent, Name name, InodeType inT);
+void copyTree(Tree origin, Tree destination);
+Tree createFile(Tree tr, Name name, InodeType type);
+Tree createTree(Tree parent, Name name, InodeType type);
+void deleteChild(Tree tr);
 Tree findNode(Tree tr, Name nodeName);
 Tree findRoot(Tree tr);
 void freeTree(Tree root);
-void deleteNode(Tree tr);
+void freeNode(Inode *in);
 void swapContent(Tree tr1, Tree tr2);
 
 #endif

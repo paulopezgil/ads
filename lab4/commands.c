@@ -2,8 +2,8 @@
 
 /******************************************************************************
 
-    DONE: cd, ls, cat, find, touch, echo, mkdir, mv
-    UNSTARTED: cp, rm, ln
+    DONE: cd, ls, cat, find, touch, echo, mkdir, mv, cp
+    UNSTARTED: rm, ln
 
 ******************************************************************************/
 
@@ -24,8 +24,8 @@ void ls(Tree tr, Path pt)
     cd(&tr, pt);
 
     /* print the name of it's childs */
-    for (int idx = 0; idx != tr->size; ++idx)
-        printf("%s\n", tr->in.folder[idx]->name);
+    for (int idx = 0; idx != tr->in->size; ++idx)
+        printf("%s\n", tr->in->content.folder[idx]->name);
 }
 
 void cat(Tree tr, Path pt)
@@ -34,16 +34,16 @@ void cat(Tree tr, Path pt)
     cd(&tr, pt);
 
     /* print the content of the file */
-    printf("%s\n", tr->in.file);
+    printf("%s\n", tr->in->content.file);
 }
 
 /* helper function for find */
 void printContent(Tree tr, Path pt)
 {
     /* visit all childs of tr */
-    for(int chd = 0; chd != tr->size; ++chd)
+    for(int chd = 0; chd != tr->in->size; ++chd)
     {
-        Tree child = tr->in.folder[chd];
+        Tree child = tr->in->content.folder[chd];
 
         /* create and print the new path for each child of tr */
         Path childPath = createPath(pt.size + 1);
@@ -56,7 +56,7 @@ void printContent(Tree tr, Path pt)
         printf("%s\n", child->name);
 
         /* if the child is a folder, apply recursion */
-        if (child->inT == Folder)
+        if (child->in->type == Folder)
             printContent(child, childPath);
 
         /* free the child path */
@@ -99,7 +99,7 @@ void echo(char *str, Tree tr, Path pt, char *(*mode)(char *, char const *))
         tr = createFile(tr, pt.name[pt.size - 1], File);
 
     /* perform the requested operation */
-    mode(tr->in.file, str);
+    mode(tr->in->content.file, str);
 }
 
 void mkdir(Tree tr, Path pt)
@@ -120,20 +120,34 @@ void mkdir(Tree tr, Path pt)
 
 void mv(Tree tr, Path pt1, Path pt2)
 {
-    Tree dir1 = tr, dir2 = tr;
-
     /* go to the specified addresses */
+    Tree dir1 = tr, dir2 = tr;
     cd(&dir1, pt1);
     cd(&dir2, pt2);
 
     /* if the file at pt2 doesn't exist, create it */
     if (strcmp(dir1->name, dir2->name) != 0)
-        dir2 = createFile(dir2, dir1->name, dir1->inT);
+        dir2 = createFile(dir2, dir1->name, dir1->in->type);
     
     /* swap the content of the files at dir1 and dir2 */
     swapContent(dir1, dir2);
 
     /* delete dir1 */
-    deleteNode(dir1);
+    deleteChild(dir1);
+}
+
+void cp(Tree tr, Path pt1, Path pt2)
+{
+    /* go to the specified addresses */
+    Tree dir1 = tr, dir2 = tr;
+    cd(&dir1, pt1);
+    cd(&dir2, pt2);
+
+    /* if dir1 is a non-directory file, create dir2 if it doesn't exist */
+    if (dir1->in->type == File && dir2->in->type == Folder)
+        createFile(dir2, dir1->name, dir1->in->type);
+
+    /* call helper function to copy the file */
+    copyTree(dir1, createFile(dir2, pt2.name[pt2.size], dir1->in->type));
 }
 
