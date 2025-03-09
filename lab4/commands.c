@@ -2,8 +2,8 @@
 
 /******************************************************************************
 
-    DONE: cd, ls, cat, find, touch, echo, mkdir
-    UNSTARTED: mv, cp, rm, ln
+    DONE: cd, ls, cat, find, touch, echo, mkdir, mv
+    UNSTARTED: cp, rm, ln
 
 ******************************************************************************/
 
@@ -116,4 +116,41 @@ void mkdir(Tree tr, Path pt)
 
         tr = auxTr;
     }
+}
+
+void mv(Tree tr, Path pt1, Path pt2)
+{
+    Tree dir1 = tr, dir2 = tr;
+
+    /* go to the specified addresses */
+    cd(&dir1, pt1);
+    cd(&dir2, pt2);
+    Tree parent1 = dir1->parent;
+
+    /* find the index of the file at pt1 in it's parent's child array */
+    int idx;
+    for (idx = 0; idx != parent1->size; ++idx)
+        if (parent1->in.folder[idx] == dir1)
+            break;
+
+    /* if the file with pt1 already exists at pt2, override it */
+    if (dir2->inT == File && strcmp(dir1->name, dir2->name) == 0)
+    {
+        strcpy(dir2->in.file, dir1->in.file);
+        freeTree(dir1);
+    }
+
+    /* otherwise, change the path of the file at pt1 to pt2 */
+    else
+    {
+        ++(dir2->size);
+        dir2->in.folder = realloc(dir2->in.folder, dir2->size * sizeof(TreeNode));
+        dir2->in.folder[dir2->size - 1] = dir1;
+        dir1->parent = dir2;
+    }
+
+    /* remove the file from the parent's child array */
+    --(parent1->size);
+    for (int chd = idx; chd != parent1->size; ++chd)
+        parent1->in.folder[chd] = parent1->in.folder[chd + 1];
 }

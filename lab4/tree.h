@@ -2,7 +2,6 @@
 #define FILE_H
 #define MAX_SIZE 61
 
-
 #ifndef NAME
 #define NAME
 typedef char Name[MAX_SIZE];
@@ -33,6 +32,5 @@ Tree createTree(Tree parent, Name name, InodeType inT);
 Tree findNode(Tree tr, Name nodeName);
 Tree findRoot(Tree tr);
 void freeTree(Tree root);
-
 
 #endif

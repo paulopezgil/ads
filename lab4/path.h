@@ -18,5 +18,4 @@ Path createPath(int capacity);
 Path readPath();
 void freePath(Path pt);
 
-
 #endif

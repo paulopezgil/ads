@@ -72,6 +72,7 @@ void callEcho(Tree *dir)
 
 }
 
+/* we assume that the -p flag is always given*/
 void callMkdir(Tree *dir)
 {
     Path pt = readPath();
@@ -80,7 +81,9 @@ void callMkdir(Tree *dir)
 
 void callMv(Tree *dir)
 {
-
+    Path pt1 = readPath();
+    Path pt2 = readPath();
+    mv(*dir, pt1, pt2);
 }
 
 void callCp(Tree *dir)
