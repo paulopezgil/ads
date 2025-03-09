@@ -10,5 +10,6 @@ void find(Tree tr);
 void touch(Tree tr, Path pt);
 void echo(char *str, Tree tr, Path pt, char *(*mode)(char *, char const *));
 void mkdir(Tree tr, Path pt);
+void mv(Tree tr, Path pt1, Path pt2);
 
 #endif

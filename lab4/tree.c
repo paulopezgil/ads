@@ -13,7 +13,7 @@ Tree createFile(Tree tr, Name filename, InodeType type)
     ++(tr->size);
 
     /* return the file */
-    return tr->in.folder[tr->size];
+    return tr->in.folder[tr->size - 1];
 }
 
 /* create a tree */
@@ -70,17 +70,60 @@ Tree findRoot(Tree tr)
 }
 
 // free a tree
-void freeTree(Tree root)
+void freeTree(Tree tr)
 {
-    if (root == NULL)
+    if (tr == NULL)
         return;
 
     // free a file
-    if (root->inT == File)
-        free(root);
+    if (tr->inT == File)
+        free(tr);
 
     // recursively free a folder
-    for (int i = 0; i != root->size; ++i)
-        freeTree(root->in.folder[i]);
-    free(root);
+    for (int i = 0; i != tr->size; ++i)
+        freeTree(tr->in.folder[i]);
+    free(tr);
+}
+
+void deleteNode(Tree tr)
+{
+    Tree parent = tr->parent;
+
+    /* case where tr is the root */
+    if (parent == tr)
+    {
+        freeTree(tr);
+        return;
+    }
+
+    /* find the index tr in it's parent's child array */
+    int idx;
+    for (idx = 0; idx != parent->size; ++idx)
+        if (parent->in.folder[idx] == tr)
+            break;
+
+    /* remove tr from the parent's child array */
+    --(parent->size);
+    for (int chd = idx; chd != parent->size; ++chd)
+        parent->in.folder[chd] = parent->in.folder[chd + 1];
+
+    /* free tr */
+    freeTree(tr);
+}
+
+void swapContent(Tree tr1, Tree tr2)
+{
+    Tree aux = tr1;
+
+    /* swap the Inode Type */
+    tr1->inT = tr2->inT;
+    tr2->inT = aux->inT;
+
+    /* swap the content */
+    tr1->in = tr2->in;
+    tr2->in = aux->in;
+
+    /* swap the sizes */
+    tr1->size = tr2->size;
+    tr2->size = aux->size;
 }

@@ -14,8 +14,8 @@ void cd(Tree *tr, Path pt)
         *tr = findRoot(*tr);
 
     /* navigate through the path */
-    for (int i = 0; i != pt.size; ++i)
-        *tr = findNode(*tr, pt.name[i]);
+    for (int idx = 0; idx != pt.size; ++idx)
+        *tr = findNode(*tr, pt.name[idx]);
 }
 
 void ls(Tree tr, Path pt)
@@ -24,8 +24,8 @@ void ls(Tree tr, Path pt)
     cd(&tr, pt);
 
     /* print the name of it's childs */
-    for (int i = 0; i != tr->size; ++i)
-        printf("%s\n", tr->in.folder[i]->name);
+    for (int idx = 0; idx != tr->size; ++idx)
+        printf("%s\n", tr->in.folder[idx]->name);
 }
 
 void cat(Tree tr, Path pt)
@@ -41,16 +41,16 @@ void cat(Tree tr, Path pt)
 void printContent(Tree tr, Path pt)
 {
     /* visit all childs of tr */
-    for(int i = 0; i != tr->size; ++i)
+    for(int chd = 0; chd != tr->size; ++chd)
     {
-        Tree child = tr->in.folder[i];
+        Tree child = tr->in.folder[chd];
 
         /* create and print the new path for each child of tr */
         Path childPath = createPath(pt.size + 1);
-        for(int j = 0; j != pt.size; ++j)
+        for(int idx = 0; idx != pt.size; ++idx)
         {
-            strcpy(childPath.name[j], pt.name[j]);
-            printf("%s/", pt.name[j]);
+            strcpy(childPath.name[idx], pt.name[idx]);
+            printf("%s/", pt.name[idx]);
         }
         strcpy(childPath.name[pt.size], child->name);
         printf("%s\n", child->name);
@@ -106,13 +106,13 @@ void mkdir(Tree tr, Path pt)
 {
     /* loop through all elements of the path */
     Tree auxTr;
-    for (int i = 0; i != pt.size; ++i)
+    for (int idx = 0; idx != pt.size; ++idx)
     {
-        auxTr = findNode(tr, pt.name[i]);
+        auxTr = findNode(tr, pt.name[idx]);
 
         /* case where the folder doesn't exist*/
         if (auxTr == tr)
-            createTree(tr, pt.name[i], Folder);
+            createTree(tr, pt.name[idx], Folder);
 
         tr = auxTr;
     }
@@ -125,32 +125,15 @@ void mv(Tree tr, Path pt1, Path pt2)
     /* go to the specified addresses */
     cd(&dir1, pt1);
     cd(&dir2, pt2);
-    Tree parent1 = dir1->parent;
 
-    /* find the index of the file at pt1 in it's parent's child array */
-    int idx;
-    for (idx = 0; idx != parent1->size; ++idx)
-        if (parent1->in.folder[idx] == dir1)
-            break;
+    /* if the file at pt2 doesn't exist, create it */
+    if (strcmp(dir1->name, dir2->name) != 0)
+        dir2 = createFile(dir2, dir1->name, dir1->inT);
+    
+    /* swap the content of the files at dir1 and dir2 */
+    swapContent(dir1, dir2);
 
-    /* if the file with pt1 already exists at pt2, override it */
-    if (dir2->inT == File && strcmp(dir1->name, dir2->name) == 0)
-    {
-        strcpy(dir2->in.file, dir1->in.file);
-        freeTree(dir1);
-    }
-
-    /* otherwise, change the path of the file at pt1 to pt2 */
-    else
-    {
-        ++(dir2->size);
-        dir2->in.folder = realloc(dir2->in.folder, dir2->size * sizeof(TreeNode));
-        dir2->in.folder[dir2->size - 1] = dir1;
-        dir1->parent = dir2;
-    }
-
-    /* remove the file from the parent's child array */
-    --(parent1->size);
-    for (int chd = idx; chd != parent1->size; ++chd)
-        parent1->in.folder[chd] = parent1->in.folder[chd + 1];
+    /* delete dir1 */
+    deleteNode(dir1);
 }
+

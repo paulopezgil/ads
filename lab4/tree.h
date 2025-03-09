@@ -32,5 +32,7 @@ Tree createTree(Tree parent, Name name, InodeType inT);
 Tree findNode(Tree tr, Name nodeName);
 Tree findRoot(Tree tr);
 void freeTree(Tree root);
+void deleteNode(Tree tr);
+void swapContent(Tree tr1, Tree tr2);
 
 #endif
