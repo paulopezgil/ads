@@ -37,6 +37,11 @@ int readPath(Path *pt)
         name[1] = '\0';
         appendName(pt, name);
     }
+    if (name[0] == ' ' || name[0] == '\n')
+    {
+        pt->size = 0;
+        return name[0] == ' ';
+    }
     else
         ungetc(name[0], stdin);
 

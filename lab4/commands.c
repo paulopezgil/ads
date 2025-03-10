@@ -21,7 +21,8 @@ void cd(Tree *tr, Path pt)
 void ls(Tree tr, Path pt)
 {
     /* go to the specified path */
-    cd(&tr, pt);
+    if (pt.size != 0)
+        cd(&tr, pt);
 
     /* print the name of it's childs */
     for (int idx = 0; idx != tr->in->size; ++idx)
@@ -112,7 +113,7 @@ void mkdir(Tree tr, Path pt)
 
         /* case where the folder doesn't exist*/
         if (auxTr == tr)
-            createTree(tr, pt.name[idx], Folder);
+            auxTr = createTree(tr, pt.name[idx], Folder);
 
         tr = auxTr;
     }
