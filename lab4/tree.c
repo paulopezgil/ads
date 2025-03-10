@@ -3,7 +3,7 @@
 /* create a copy of a Tree at a given Tree of the same type */
 void copyTree(Tree origin, Tree destination)
 {
-    /* override destination if origin is a file */
+    /* override the destination if origin is a file */
     if (origin->in->type == File)
     {
         strcpy(destination->in->content.file, origin->in->content.file);
@@ -14,47 +14,54 @@ void copyTree(Tree origin, Tree destination)
     Tree newDest;
     for(int idx = 0; idx != origin->in->size; ++idx)
     {
-        newDest = createFile(destination,
+        newDest = createTree(destination,
                              origin->in->content.folder[idx]->name,
                              origin->in->content.folder[idx]->in->type);
         copyTree(origin->in->content.folder[idx], newDest);
     }
 }
-
-/* create a node on a given folder */
-Tree createFile(Tree tr, Name name, InodeType type)
+Tree createRoot()
 {
-    /* allocate space for 1 more node */
-    tr->in->content.folder = realloc(tr->in->content.folder, tr->in->size + 1);
-    
-    /* create the node */
-    tr->in->content.folder[tr->in->size] = createTree(tr, name, type);
-
-    /* update the size of the folder*/
-    ++(tr->in->size);
-
-    /* return the tree node */
-    return tr->in->content.folder[tr->in->size - 1];
+    Name rootName = "/";
+    Tree root = createTree(NULL, rootName, Folder);
+    root->parent = root;
+    return root;
 }
 
-/* create a tree */
+/* create a tree on a given folder */
 Tree createTree(Tree parent, Name name, InodeType type)
 {
-    /* create the TreeNode */
+    /* create a TreeNode */
     Tree tr = malloc(sizeof(TreeNode));
     tr->parent = parent;
     strcpy(tr->name, name);
-    
+
     /* create the Inode */
     tr->in = malloc(sizeof(Inode));
     if (type == File)
-        tr->in->content.file = NULL;
+    {
+        tr->in->content.file = malloc(sizeof(char));
+        tr->in->content.file[0] = '\0';
+        tr->in->size = 1;
+    }
     else
+    {
         tr->in->content.folder = NULL;
+        tr->in->size = 0;
+    }
     tr->in->type = type;
-    tr->in->size = 0;
     tr->in->refCount = 1;
 
+    /* if a parent is specified, add tr to the child list */
+    if (parent != NULL)
+    {
+        parent->in->content.folder = realloc(parent->in->content.folder,
+                                             (parent->in->size + 1) * sizeof(TreeNode));
+        parent->in->content.folder[parent->in->size] = tr;
+        ++(parent->in->size);
+    }
+
+    /* return the created tree node */
     return tr;
 }
 
@@ -89,15 +96,12 @@ Tree findNode(Tree tr, Name nodeName)
     /* case / */
     if (strcmp(nodeName, "/") == 0)
         return findRoot(tr);
-
     /* case . */
     if (strcmp(nodeName, ".") == 0)
         return tr;
-
     /* case .. */
     if (strcmp(nodeName, "..") == 0)
         return tr->parent;
-
     /* navigate the nodes in tr folder */
     Tree child;
     for (int i = 0; i != tr->in->size; ++i)
@@ -108,7 +112,6 @@ Tree findNode(Tree tr, Name nodeName)
         if (strcmp(child->name, nodeName) == 0)
             return child;
     }
-
     /* if the name is not found, tr remains the same */
     return tr;
 }

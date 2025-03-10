@@ -33,7 +33,7 @@ typedef struct TreeNode {
 } TreeNode;
 
 void copyTree(Tree origin, Tree destination);
-Tree createFile(Tree tr, Name name, InodeType type);
+Tree createRoot();
 Tree createTree(Tree parent, Name name, InodeType type);
 void deleteChild(Tree tr);
 Tree findNode(Tree tr, Name nodeName);

@@ -15,7 +15,7 @@ typedef struct Path {
 
 void appendName(Path *pt, Name name);
 Path createPath(int capacity);
-int readPath(Path *pt);     /* returns -1 if '\n' is read */
+Path readPath();
 void freePath(Path pt);
 
 #endif

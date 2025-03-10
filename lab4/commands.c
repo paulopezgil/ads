@@ -9,7 +9,7 @@
 
 void cd(Tree *tr, Path pt)
 {
-    /* if no path is given, return the root */
+    /* if an empty path is given, go to the root */
     if (pt.size == 0)
         *tr = findRoot(*tr);
 
@@ -35,7 +35,8 @@ void cat(Tree tr, Path pt)
     cd(&tr, pt);
 
     /* print the content of the file */
-    printf("%s\n", tr->in->content.file);
+    if (tr->in->size != 1)
+        printf("%s\n", tr->in->content.file);
 }
 
 /* helper function for find */
@@ -87,20 +88,39 @@ void touch(Tree tr, Path pt)
     cd(&tr, pt);
 
     /* create the file using helper function */
-    createFile(tr, pt.name[pt.size - 1], File);
+    createTree(tr, pt.name[pt.size - 1], File);
 }
 
-void echo(char *str, Tree tr, Path pt, char *(*mode)(char *, char const *))
+/* overwrite the contents of the file with str */
+void echo(char *str, int size, Tree tr, Path pt, int override)
 {
     /* go to the specified file */
     cd(&tr, pt);
 
     /* if the file does not exist, create it */
-    if (tr->name != pt.name[pt.size - 1])
-        tr = createFile(tr, pt.name[pt.size - 1], File);
+    if (tr->in->type != File)
+        tr = createTree(tr, pt.name[pt.size - 1], File);
 
     /* perform the requested operation */
-    mode(tr->in->content.file, str);
+    if (override)
+    {
+        /* overwrite the file */
+        free(tr->in->content.file);
+        tr->in->content.file = malloc(size * sizeof(char));
+        strcpy(tr->in->content.file, str);
+
+        /* update the size of the file */
+        tr->in->size = size;
+    }
+    else
+    {
+        /* append the content of str to the file */
+        tr->in->content.file = realloc(tr->in->content.file,
+                                       (tr->in->size + size) * sizeof(char));
+        strcat(tr->in->content.file, str);
+        tr->in->size += size;
+    }
+
 }
 
 void mkdir(Tree tr, Path pt)
@@ -113,7 +133,9 @@ void mkdir(Tree tr, Path pt)
 
         /* case where the folder doesn't exist*/
         if (auxTr == tr)
+        {
             auxTr = createTree(tr, pt.name[idx], Folder);
+        }
 
         tr = auxTr;
     }
@@ -128,7 +150,7 @@ void mv(Tree tr, Path pt1, Path pt2)
 
     /* if the file at pt2 doesn't exist, create it */
     if (strcmp(dir1->name, dir2->name) != 0)
-        dir2 = createFile(dir2, dir1->name, dir1->in->type);
+        dir2 = createTree(dir2, dir1->name, dir1->in->type);
     
     /* swap the content of the files at dir1 and dir2 */
     swapContent(dir1, dir2);
@@ -144,11 +166,11 @@ void cp(Tree tr, Path pt1, Path pt2)
     cd(&dir1, pt1);
     cd(&dir2, pt2);
 
-    /* if dir1 is a non-directory file, create dir2 if it doesn't exist */
-    if (dir1->in->type == File && dir2->in->type == Folder)
-        createFile(dir2, dir1->name, dir1->in->type);
+    /* create dir2 except when overriding an existing non-directory file */
+    if (!(dir1->in->type == File && dir2->in->type == File))
+        createTree(dir2, dir1->name, dir1->in->type);
 
     /* call helper function to copy the file */
-    copyTree(dir1, createFile(dir2, pt2.name[pt2.size - 1], dir1->in->type));
+    copyTree(dir1, dir2);
 }
 

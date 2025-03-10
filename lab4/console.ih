@@ -22,7 +22,7 @@ typedef enum Commands {
 } Commands;
 
 int getCommandId(char *name);
-char *readString(char delimiter);
+int readString(char **str, char delimiter);
 void callExit(Tree *dir);
 void callCd(Tree *dir);
 void callLs(Tree *dir);
@@ -35,18 +35,3 @@ void callMv(Tree *dir);
 void callCp(Tree *dir);
 void callRm(Tree *dir);
 void callLn(Tree *dir);
-
-void (*execute[12])(Tree *) = {
-    callExit,
-    callCd,
-    callLs,
-    callCat,
-    callFind,
-    callTouch,
-    callEcho,
-    callMkdir,
-    callMv,
-    callCp,
-    callRm,
-    callLn
-};

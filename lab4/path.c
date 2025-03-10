@@ -26,36 +26,39 @@ Path createPath(int capacity)
 }
 
 /* read a path from stdin */
-int readPath(Path *pt)
+Path readPath()
 {
     Name name;
+    Path pt = createPath(1);
+    char separator = getchar();
 
-    /* check if it's an absolute path */
-    name[0] = getchar();
-    if (name[0] == '/')
+    /* if a space is read, read the path */
+    /* otherwise, the path is empty */
+    if (separator == ' ')
     {
-        name[1] = '\0';
-        appendName(pt, name);
-    }
-    if (name[0] == ' ' || name[0] == '\n')
-    {
-        pt->size = 0;
-        return name[0] == ' ';
-    }
-    else
-        ungetc(name[0], stdin);
+        /* check if it's an absolute path */
+        name[0] = getchar();
+        if (name[0] == '/')
+        {
+            name[1] = '\0';
+            appendName(&pt, name);
+        }
+        else
+            ungetc(name[0], stdin);
 
-    /* read each name until a slash, space or line break is found */
-    char separator = 'a';
-    while (separator != ' ' && separator != '\n')
-    {
-        scanf("%[^/ \n]", name);
-        appendName(pt, name);
-        separator = getchar();
+        /* read each name until a space or a line break is found */
+        do
+        {
+            scanf("%[^/ \n]", name);
+            appendName(&pt, name);
+            separator = getchar();
+        }
+        while (separator != ' ' && separator != '\n');
+
+        ungetc(separator, stdin);
     }
 
-    /* return 1 if the separator is ' ' and 0 if it's '\n' */
-    return separator == ' ';
+    return pt;
 }
 
 /* free a path */

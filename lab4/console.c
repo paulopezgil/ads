@@ -1,5 +1,20 @@
 #include "console.ih"
 
+void (*execute[12])(Tree *) = {
+    callExit,
+    callCd,
+    callLs,
+    callCat,
+    callFind,
+    callTouch,
+    callEcho,
+    callMkdir,
+    callMv,
+    callCp,
+    callRm,
+    callLn
+};
+
 void executeCommand(char *name, Tree *dir)
 {
     execute[getCommandId(name)](dir);
@@ -28,6 +43,8 @@ int getCommandId(char *command)
         return ECHO;
     if (strcmp(command, "mkdir") == 0)
         return MKDIR;
+    if (strcmp(command, "mv") == 0)
+        return MV;
     if (strcmp(command, "cp") == 0)
         return CP;
     if (strcmp(command, "rm") == 0)
@@ -38,17 +55,17 @@ int getCommandId(char *command)
 }
 
 /* read a string of arbitrary length until the delimiter is found */
-char *readString(char delimiter)
+int readString(char **str, char delimiter)
 {
     int capacity = 1, size = 0, foundDelimiter = 0;
-    char *str = malloc(sizeof(char));
+    *str = malloc(sizeof(char));
 
     while (!foundDelimiter)
     {
-        str[size] = getchar();
+        (*str)[size] = getchar();
 
         /* stop if the delimiter is found */
-        if (str[size] == delimiter)
+        if ((*str)[size] == delimiter)
             break;
 
         /* otherwise, continue and double the capacity if necessary */
@@ -56,13 +73,13 @@ char *readString(char delimiter)
         if (size == capacity)
         {
             capacity *= 2;
-            str = realloc(str, capacity * sizeof(char));
+            *str = realloc(*str, (capacity + 1) * sizeof(char));
         }
     }
 
     /* turn the delimiter into a null terminator and return */
-    str[size] = '\0';
-    return str;
+    (*str)[size] = '\0';
+    return size + 1;
 }
 
 void callExit(Tree *dir)
@@ -73,23 +90,29 @@ void callExit(Tree *dir)
 
 void callCd(Tree *dir)
 {
-    Path pt = createPath(1);
-    readPath(&pt);
+    Path pt = readPath();
     cd(dir, pt);
+
+    /* free the path */
+    freePath(pt);
 }
 
 void callLs(Tree *dir)
 {
-    Path pt = createPath(1);
-    readPath(&pt);
+    Path pt = readPath();
     ls(*dir, pt);
+
+    /* free the path */
+    freePath(pt);
 }
 
 void callCat(Tree *dir)
 {
-    Path pt = createPath(1);
-    readPath(&pt);
+    Path pt = readPath();
     cat(*dir, pt);
+
+    /* free the path */
+    freePath(pt);
 }
 
 void callFind(Tree *dir)
@@ -100,35 +123,46 @@ void callFind(Tree *dir)
 void callTouch(Tree *dir)
 {
     /* read the paths until '\n' is read */
-    Path pt = createPath(1);
-    while (readPath(&pt))
+    Path pt = readPath();
+    while (pt.size != 0)
+    {
         touch(*dir, pt);
+        freePath(pt);
+        pt = readPath();
+    }
+
+    /* free the path */
+    freePath(pt);
 }
 
 void callEcho(Tree *dir)
 {
-    getchar();   /* skip the initial " */
+    getchar();  /* skip ' ' */
+    getchar();  /* skip " */
 
     /* read the content of the string */
-    char *content = readString('"');
+    char *content = NULL;
+    int size = readString(&content, '"');
 
     getchar();   /* skip ' ' */
     getchar();   /* skip '>' */
 
     /* deduce the mode of execution */
-    char *(*mode)(char *, char const *) = strcpy;
+    int override = 1;
     if (getchar() == '>')
-    {
-        getchar();       /* skip ' ' */
-        mode = strcat;   /* append instead of overriding */
-    }
+        override = 0;
+    else
+        ungetc(' ', stdin);
 
     /* read the path */
-    Path pt = createPath(1);
-    readPath(&pt);
+    Path pt = readPath();
 
     /* call the appropiate version of echo */
-    echo(content, *dir, pt, mode);
+    echo(content, size, *dir, pt, override);
+
+    /* free the data */
+    free(content);
+    freePath(pt);
 }
 
 /* we assume that the -p flag is always given*/
@@ -140,17 +174,27 @@ void callMkdir(Tree *dir)
     getchar();
 
     /* read the paths until '\n' is read */
-    Path pt = createPath(1);
-    while (readPath(&pt))
+    Path pt = readPath();
+    while (pt.size != 0)
+    {
         mkdir(*dir, pt);
+        freePath(pt);
+        pt = readPath();
+    }
+
+    /* free the path */
+    freePath(pt);
 }
 
 void callMv(Tree *dir)
 {
-    Path *pt1 = NULL, *pt2 = NULL;
-    readPath(pt1);
-    readPath(pt2);
-    mv(*dir, *pt1, *pt2);
+    Path pt1 = readPath();
+    Path pt2 = readPath();
+    mv(*dir, pt1, pt2);
+
+    /* free the paths */
+    freePath(pt1);
+    freePath(pt2);
 }
 
 void callCp(Tree *dir)
