@@ -10,7 +10,16 @@
 *  and preprocessor directives needed by the source files implementing the    *
 *  public header functions. Helper functions (i.e. methods called by the      *
 *  functions found in the public header) are declared on the internar header  *
-*  if they are only used by the functions found in the public header          *
+*  if they are only used by the functions found in the public header.         *
+*                                                                             *
+*  Source file organization:                                                  *
+*                                          tree.c ···· trie.c                 *
+*                                            ·                                *
+*                                            ·                                *
+*  main.c ···· console.c ···· commands.c ·····                                *
+*                                            ·                                *
+*                                            ·                                *
+*                                          path.c                             *
 *                                                                             *
 \*****************************************************************************/
 

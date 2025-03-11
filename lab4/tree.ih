@@ -2,3 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* functions in trie.c */
+Trie createTrie();
+void insertTrie(Trie tr, Tree file);
+Tree searchTrie(Trie tr, Name name);
+void freeTrie(Trie root);

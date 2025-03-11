@@ -1,6 +1,7 @@
 #ifndef FILE_H
 #define FILE_H
 #define MAX_SIZE 61
+#define MAX_CHAR 128
 
 #ifndef NAME
 #define NAME
@@ -8,6 +9,12 @@ typedef char Name[MAX_SIZE];
 #endif
 
 typedef struct TreeNode *Tree;
+typedef struct TrieNode *Trie;
+
+typedef struct TrieNode {
+    Tree file;
+    Trie child[MAX_CHAR];
+} TrieNode;
 
 typedef enum InodeType {
     Folder,
@@ -22,6 +29,7 @@ typedef union InodeContent {
 typedef struct Inode {
     InodeType type;
     InodeContent content;
+    Trie childs;    /* helper data structure to quickly search for childs */
     int size;
     int refCount;
 } Inode;
@@ -32,6 +40,7 @@ typedef struct TreeNode {
     Inode *in;    
 } TreeNode;
 
+/* functions in tree.c */
 void copyTree(Tree origin, Tree destination);
 Tree createRoot();
 Tree createTree(Tree parent, Name name, InodeType type);
