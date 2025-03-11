@@ -101,6 +101,28 @@ void freeTree(Tree tr)
     free(tr);
 }
 
+void removeFile(Tree folder, Name name)
+{
+    /* remove the file 'name' in the parent folder */
+    Trie tr = folder->in->content.folder;
+    for (int pos = 0; pos != MAX_SIZE; ++pos)
+    {
+        /* if tr is NULL, there is no child called name */
+        if (tr == NULL)
+            return;
+
+        /* if null-terminator is read, the name was found */
+        if (name[pos] == '\0')
+        {
+            freeTree(tr->file);
+            tr->file = NULL;
+        }
+
+        /* go to the next letter */
+        tr = tr->next[(int)name[pos]];
+    }
+}
+
 void swapContent(Tree tr1, Tree tr2)
 {
     Inode *aux = tr1->in;

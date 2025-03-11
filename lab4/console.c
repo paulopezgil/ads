@@ -189,7 +189,7 @@ int callEcho(Tree *dir)
 /* we assume that the -p flag is always given*/
 int callMkdir(Tree *dir)
 {   
-    /* skip "-p "*/
+    /* skip " -p" */
     getchar();
     getchar();
     getchar();
@@ -223,15 +223,47 @@ int callMv(Tree *dir)
 
 int callCp(Tree *dir)
 {
+    Path pt1 = readPath();
+    Path pt2 = readPath();
+    cp(*dir, pt1, pt2);
+
+    /* free the paths and return */
+    freePath(pt1);
+    freePath(pt2);
+
     return 0;
 }
 
 int callRm(Tree *dir)
 {
+    /* skip " -r" */
+    getchar();
+    getchar();
+    getchar();
+
+    /* read the paths until '\n' is read */
+    Path pt = readPath();
+    while (pt.size != 0)
+    {
+        rm(*dir, pt);
+        freePath(pt);
+        pt = readPath();
+    }
+
+    /* free the path and return */
+    freePath(pt);
     return 0;
 }
 
 int callLn(Tree *dir)
 {
+    Path pt1 = readPath();
+    Path pt2 = readPath();
+    ln(*dir, pt1, pt2);
+
+    /* free the paths and return */
+    freePath(pt1);
+    freePath(pt2);
+
     return 0;
 }

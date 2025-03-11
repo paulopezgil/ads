@@ -60,6 +60,9 @@ Tree findRoot(Tree tr);
 /* free a tree */
 void freeTree(Tree root);
 
+/* delete a file from a folder*/
+void removeFile(Tree folder, Name name);
+
 /* swap the inodes of two trees */
 void swapContent(Tree tr1, Tree tr2);
 

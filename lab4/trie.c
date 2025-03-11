@@ -104,9 +104,9 @@ Tree searchTrie(Trie tr, Name name)
         if (tr == NULL)
             return NULL;
 
-        /* if null-terminator is read, the name was found */
+        /* if null-terminator is read, the name could be in the trie */
         if (name[pos] == '\0')
-            return tr->file;
+            return tr->file;    /* NULL if the name is not actually there  */
 
         /* go to the next letter */
         tr = tr->next[(int)name[pos]];

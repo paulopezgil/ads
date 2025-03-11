@@ -156,3 +156,16 @@ void cp(Tree tr, Path pt1, Path pt2)
     copyTree(dir1, dir2);
 }
 
+void rm(Tree tr, Path pt)
+{
+    /* go to the specified location */
+    cd(&tr, pt);
+
+    /* remove tr from it's parent folder */
+    removeFile(tr->parent, tr->name);
+}
+
+void ln(Tree tr, Path pt1, Path pt2)
+{
+
+}
