@@ -6,7 +6,7 @@
 void cd(Tree *tr, Path pt);
 void ls(Tree tr, Path pt);
 void cat(Tree tr, Path pt);
-void find(Tree tr);
+void find(Tree tr, Path *pt);
 void touch(Tree tr, Path pt);
 void echo(char *str, int size, Tree tr, Path pt, int override);
 void mkdir(Tree tr, Path pt);

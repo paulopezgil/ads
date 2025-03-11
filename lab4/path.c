@@ -62,3 +62,10 @@ void freePath(Path pt)
 {
     free(pt.name);
 }
+
+void printPath(Path pt)
+{
+    for (int idx = 0; idx != pt.size; ++idx)
+        printf("%s/", pt.name[idx]);
+    printf("\n");
+}

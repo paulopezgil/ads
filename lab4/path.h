@@ -25,4 +25,7 @@ Path readPath();
 /* free a path */
 void freePath(Path pt);
 
+/* print a path */
+void printPath(Path pt);
+
 #endif

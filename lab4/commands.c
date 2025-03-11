@@ -39,52 +39,33 @@ void cat(Tree tr, Path pt)
         printf("%s\n", tr->in->content.file);
 }
 
-/* helper function for find */
-void printContent(Tree tr, Path pt)
+void find(Tree tr, Path *pt)
 {
-    /* Obtain tr's child list */
-    int size = 0;
-    Tree *children = childList(tr->in->content.folder, &size);
+    /* print the current node */
+    printPath(*pt);
 
-    /* visit all childs of tr */
-    for(int chd = 0; chd != size; ++chd)
+    /* if tr is a folder, print the path of it's files */
+    if (tr->in->type == Folder)
     {
-        /* create and print the new path for each child of tr */
-        Path childPath = createPath(pt.size + 1);
-        for(int idx = 0; idx != pt.size; ++idx)
+        /* obtain the array of children */
+        int size = 0;
+        Tree *children = childList(tr->in->content.folder, &size);
+        
+        /* for each file, execute find again */
+        for (int idx = 0; idx != size; ++idx)
         {
-            strcpy(childPath.name[idx], pt.name[idx]);
-            printf("%s/", pt.name[idx]);
+            /* add the name of the child to the path */
+            appendName(pt, children[idx]->name);
+
+            /* call find with the new path */
+            find(children[idx], pt);
+
+            /* remove the name of the child from the path */
+            --(pt->size);
         }
-        strcpy(childPath.name[pt.size], children[chd]->name);
-        printf("%s\n", children[chd]->name);
 
-        /* if the child is a folder, apply recursion */
-        if (children[chd]->in->type == Folder)
-            printContent(children[chd], childPath);
-
-        /* free the child path */
-        freePath(childPath);
+        free(children);
     }
-
-    /* free allocated memory */
-    free(children);
-}
-
-void find(Tree tr)
-{
-    /* print initial dot */
-    printf(".\n");
-
-    /* create the initial path */
-    Path pt = createPath(1);
-    strcpy(pt.name[0], ".");
-
-    /* call the helper function */
-    printContent(tr, pt);
-
-    /* free the initial path */
-    freePath(pt);
 }
 
 void touch(Tree tr, Path pt)

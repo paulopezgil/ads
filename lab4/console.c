@@ -99,9 +99,8 @@ int callCd(Tree *dir)
     Path pt = readPath();
     cd(dir, pt);
 
-    /* free the path */
+    /* free the path and return */
     freePath(pt);
-
     return 0;
 }
 
@@ -110,9 +109,8 @@ int callLs(Tree *dir)
     Path pt = readPath();
     ls(*dir, pt);
 
-    /* free the path */
+    /* free the path and return */
     freePath(pt);
-
     return 0;
 }
 
@@ -121,15 +119,22 @@ int callCat(Tree *dir)
     Path pt = readPath();
     cat(*dir, pt);
 
-    /* free the path */
+    /* free the path and return */
     freePath(pt);
-
     return 0;
 }
 
 int callFind(Tree *dir)
 {
-    find(*dir);
+    /* create the initial path */
+    Path pt = createPath(1);
+    Name dot = ".";
+    appendName(&pt, dot);
+
+    find(*dir, &pt);
+
+    /* free the path and return */
+    freePath(pt);
     return 0;
 }
 
@@ -144,7 +149,7 @@ int callTouch(Tree *dir)
         pt = readPath();
     }
 
-    /* free the path */
+    /* free the path and return */
     freePath(pt);
     
     return 0;
@@ -175,10 +180,9 @@ int callEcho(Tree *dir)
     /* call the appropiate version of echo */
     echo(content, size, *dir, pt, override);
 
-    /* free the data */
+    /* free the data and return */
     free(content);
     freePath(pt);
-
     return 0;
 }
 
@@ -199,9 +203,8 @@ int callMkdir(Tree *dir)
         pt = readPath();
     }
 
-    /* free the path */
+    /* free the path and return */
     freePath(pt);
-
     return 0;
 }
 
@@ -211,7 +214,7 @@ int callMv(Tree *dir)
     Path pt2 = readPath();
     mv(*dir, pt1, pt2);
 
-    /* free the paths */
+    /* free the paths and return */
     freePath(pt1);
     freePath(pt2);
 
