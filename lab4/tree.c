@@ -65,43 +65,20 @@ Tree createTree(Tree parent, Name name, InodeType type)
     return tr;
 }
 
-void deleteChild(Tree tr)
-{
-    Tree parent = tr->parent;
-
-    /* case where tr is the root */
-    if (parent == tr)
-    {
-        freeTree(tr);
-        return;
-    }
-
-    /* find the index of tr in it's parent's child array */
-    int idx;
-    for (idx = 0; idx != parent->in->size; ++idx)
-        if (parent->in->content.folder[idx] == tr)
-            break;
-
-    /* remove tr from the parent's child array */
-    --(parent->in->size);
-    for (int chd = idx; chd != parent->in->size; ++chd)
-        parent->in->content.folder[chd] = parent->in->content.folder[chd + 1];
-
-    /* free tr */
-    freeTree(tr);
-}
-
 Tree findNode(Tree tr, Name nodeName)
 {
     /* case / */
     if (strcmp(nodeName, "/") == 0)
         return findRoot(tr);
+    
     /* case . */
     if (strcmp(nodeName, ".") == 0)
         return tr;
+
     /* case .. */
     if (strcmp(nodeName, "..") == 0)
         return tr->parent;
+
     /* navigate the nodes in tr folder */
     Tree child;
     for (int i = 0; i != tr->in->size; ++i)
@@ -136,7 +113,23 @@ void freeTree(Tree tr)
     /* free the inode */
     freeNode(tr->in);
 
-    /* free the tree node */
+    /* delete tr from the parent's child array */
+    Tree parent = tr->parent;
+    if (parent != tr)
+    {
+        /* find the index of tr in it's parent's child array */
+        int idx;
+        for (idx = 0; idx != parent->in->size; ++idx)
+            if (parent->in->content.folder[idx] == tr)
+                break;
+
+        /* remove tr from the parent's child array */
+        --(parent->in->size);
+        for (int chd = idx; chd != parent->in->size; ++chd)
+            parent->in->content.folder[chd] = parent->in->content.folder[chd + 1];
+    }
+
+    /* free the tree */
     free(tr);
 }
 

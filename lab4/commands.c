@@ -133,9 +133,7 @@ void mkdir(Tree tr, Path pt)
 
         /* case where the folder doesn't exist*/
         if (auxTr == tr)
-        {
             auxTr = createTree(tr, pt.name[idx], Folder);
-        }
 
         tr = auxTr;
     }
@@ -147,16 +145,15 @@ void mv(Tree tr, Path pt1, Path pt2)
     Tree dir1 = tr, dir2 = tr;
     cd(&dir1, pt1);
     cd(&dir2, pt2);
-
+    
     /* if the file at pt2 doesn't exist, create it */
     if (strcmp(dir1->name, dir2->name) != 0)
-        dir2 = createTree(dir2, dir1->name, dir1->in->type);
-    
+        dir2 = createTree(dir2, pt2.name[pt2.size - 1], dir1->in->type);
     /* swap the content of the files at dir1 and dir2 */
     swapContent(dir1, dir2);
 
     /* delete dir1 */
-    deleteChild(dir1);
+    freeTree(dir1);
 }
 
 void cp(Tree tr, Path pt1, Path pt2)
