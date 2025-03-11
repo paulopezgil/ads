@@ -1,6 +1,5 @@
 #include "path.ih"
 
-/* add a name to the path */
 void appendName(Path *pt, Name name)
 {
     /* if the path is full, double it's capacity */
@@ -15,7 +14,6 @@ void appendName(Path *pt, Name name)
     pt->size += 1;
 }
 
-/* create a new path with given capacity */
 Path createPath(int capacity)
 {
     Path pt;
@@ -25,7 +23,6 @@ Path createPath(int capacity)
     return pt;
 }
 
-/* read a path from stdin */
 Path readPath()
 {
     Name name;
@@ -61,7 +58,6 @@ Path readPath()
     return pt;
 }
 
-/* free a path */
 void freePath(Path pt)
 {
     free(pt.name);

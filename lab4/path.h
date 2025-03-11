@@ -13,9 +13,16 @@ typedef struct Path {
     int capacity;
 } Path;
 
+/* add a name to the path */
 void appendName(Path *pt, Name name);
+
+/* create a new path with given capacity */
 Path createPath(int capacity);
+
+/* read a path from stdin */
 Path readPath();
+
+/* free a path */
 void freePath(Path pt);
 
 #endif

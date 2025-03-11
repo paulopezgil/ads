@@ -1,5 +1,10 @@
 #include "console.ih"
 
+/**************************************************\
+*   The following functions decide which command   *
+*   to call based on the input recieved at main    *
+\**************************************************/
+
 int (*execute[12])(Tree *) = {
     callExit,
     callCd,
@@ -19,11 +24,6 @@ int executeCommand(char *name, Tree *dir)
 {
     return execute[getCommandId(name)](dir);
 }
-
-/**********************************************************************\
-*   The following functions parse the input from stdin, and call the   *
-*   appropiate methods with the scanned arguments                      *
-\**********************************************************************/
 
 int getCommandId(char *command)
 {
@@ -53,6 +53,11 @@ int getCommandId(char *command)
         return LN;
     return -1;
 }
+
+/**************************************************************\
+*   The following functions parse the input from stdin, and    *
+*   call the appropiate methods with the scanned arguments     *
+\**************************************************************/
 
 /* read a string of arbitrary length until the delimiter is found */
 int readString(char **str, char delimiter)

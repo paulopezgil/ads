@@ -60,9 +60,6 @@ Tree findRoot(Tree tr);
 /* free a tree */
 void freeTree(Tree root);
 
-/* free a node */
-void freeNode(Inode *in);
-
 /* swap the inodes of two trees */
 void swapContent(Tree tr1, Tree tr2);
 

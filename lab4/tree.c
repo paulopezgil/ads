@@ -27,31 +27,6 @@ void copyTree(Tree origin, Tree destination)
     }
 }
 
-Inode *createInode(InodeType type)
-{
-    /* create the inode */
-    Inode *in = malloc(sizeof(Inode));
-    in->type = type;
-    in->refCount = 1;
-    
-    /* create a file */
-    if (type == File)
-    {
-        in->content.file = malloc(sizeof(char));
-        in->content.file[0] = '\0';
-        in->size = 1;
-    }
-
-    /* create a folder */
-    else
-    {
-        in->content.folder = createTrie();
-        in->size = 0;
-    }
-
-    return in;
-}
-
 Tree createRoot()
 {
     Name rootName = "/";
@@ -126,6 +101,38 @@ void freeTree(Tree tr)
     free(tr);
 }
 
+void swapContent(Tree tr1, Tree tr2)
+{
+    Inode *aux = tr1->in;
+    tr1->in = tr2->in;
+    tr2->in = aux;
+}
+
+Inode *createInode(InodeType type)
+{
+    /* create the inode */
+    Inode *in = malloc(sizeof(Inode));
+    in->type = type;
+    in->refCount = 1;
+    
+    /* create a file */
+    if (type == File)
+    {
+        in->content.file = malloc(sizeof(char));
+        in->content.file[0] = '\0';
+        in->size = 1;
+    }
+
+    /* create a folder */
+    else
+    {
+        in->content.folder = createTrie();
+        in->size = 0;
+    }
+
+    return in;
+}
+
 void freeNode(Inode *in)
 {
     if (in == NULL)
@@ -146,11 +153,4 @@ void freeNode(Inode *in)
         /* free the inode */
         free(in);
     }
-}
-
-void swapContent(Tree tr1, Tree tr2)
-{
-    Inode *aux = tr1->in;
-    tr1->in = tr2->in;
-    tr2->in = aux;
 }

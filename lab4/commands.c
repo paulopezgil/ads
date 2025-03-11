@@ -1,12 +1,5 @@
 #include "commands.ih"
 
-/******************************************************************************
-
-    DONE: cd, ls, cat, find, touch, echo, mkdir, mv, cp
-    UNSTARTED: rm, ln
-
-******************************************************************************/
-
 void cd(Tree *tr, Path pt)
 {
     /* if an empty path is given, go to the root */
