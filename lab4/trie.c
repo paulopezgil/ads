@@ -1,5 +1,66 @@
 #include "tree.ih"
 
+Tree *childList(Trie tr, int *size)
+{
+    if (tr == NULL)
+    {
+        *size = 0;
+        return NULL;
+    }
+    
+    /* initialize capacity and size */
+    int capacity = 2;
+    *size = 0;
+    Tree *list = calloc(capacity, sizeof(Tree));
+    
+    /* add the file of the current trie node if it exists */
+    if (tr->file != NULL)
+    {
+        list[0] = tr->file;
+        ++(*size);
+    }
+    
+    /* process each child in the trie */
+    for (int idx = 0; idx < MAX_CHAR; idx++)
+    {
+        if (tr->child[idx] != NULL)
+        {
+            /* recursively obtain the childList of each child */
+            int size2 = 0;
+            Tree *list2 = childList(tr->child[idx], &size2);
+            
+            if (size2 != 0)
+            {
+                /* expand the capacity if needed */
+                if (*size + size2 > capacity)
+                {
+                    capacity = (*size + size2) * 2;
+                    list = realloc(list, capacity * sizeof(Tree));
+                }
+                
+                /* Add all child trees to the list */
+                for (int pos = 0; pos != size2; ++pos)
+                {
+                    list[*size] = list2[pos];
+                    ++(*size);
+                }
+                
+                free(list2);
+            }
+        }
+    }
+    
+    /* If no children was found, return NULL */
+    if (*size == 0)
+    {
+        free(list);
+        return NULL;
+    }
+    
+    /* return the found list */
+    return list;
+}
+
 Trie createTrie()
 {
     /* allocate memory */
@@ -7,7 +68,7 @@ Trie createTrie()
 
     /* set default values */
     tr->file = NULL;
-    for (int pos = 0; pos != MAX_SIZE; ++pos)
+    for (int pos = 0; pos != MAX_CHAR; ++pos)
         tr->child[pos] = NULL;
 
     /* return the trie */

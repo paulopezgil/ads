@@ -1,25 +1,32 @@
 #include "tree.ih"
 
-/* create a copy of a Tree at a given Tree of the same type */
 void copyTree(Tree origin, Tree destination)
 {
     /* override the destination if origin is a file */
     if (origin->in->type == File)
     {
+        free(destination->in->content.file);
+        destination->in->content.file = malloc(origin->in->size * sizeof(char));
         strcpy(destination->in->content.file, origin->in->content.file);
+        destination->in->size = origin->in->size;
         return;
     }
 
-    /* if origin is a folder, copy it's contents to destination */
-    Tree newDest;
-    for(int idx = 0; idx != origin->in->size; ++idx)
+    /* if origin is a folder, obtain it's child list */
+    int size = 0;
+    Tree *children = childList(origin->in->content.folder, &size);
+
+    /* copy the children of origin to destination */
+    if (children != NULL)
     {
-        newDest = createTree(destination,
-                             origin->in->content.folder[idx]->name,
-                             origin->in->content.folder[idx]->in->type);
-        copyTree(origin->in->content.folder[idx], newDest);
+        for(int idx = 0; idx != size; ++idx)
+            copyTree(children[idx], createTree(destination,
+                                            children[idx]->name,
+                                            children[idx]->in->type));
+        free(children);
     }
 }
+
 Tree createRoot()
 {
     Name rootName = "/";
@@ -28,7 +35,6 @@ Tree createRoot()
     return root;
 }
 
-/* create a tree on a given folder */
 Tree createTree(Tree parent, Name name, InodeType type)
 {
     /* create a TreeNode */
@@ -46,18 +52,16 @@ Tree createTree(Tree parent, Name name, InodeType type)
     }
     else
     {
-        tr->in->content.folder = NULL;
+        tr->in->content.folder = createTrie();
         tr->in->size = 0;
     }
     tr->in->type = type;
     tr->in->refCount = 1;
 
-    /* if a parent is specified, add tr to the child list */
+    /* if a parent is specified, add tr to the parent's child trie */
     if (parent != NULL)
     {
-        parent->in->content.folder = realloc(parent->in->content.folder,
-                                             (parent->in->size + 1) * sizeof(TreeNode));
-        parent->in->content.folder[parent->in->size] = tr;
+        insertTrie(parent->in->content.folder, tr);
         ++(parent->in->size);
     }
 
@@ -79,21 +83,15 @@ Tree findNode(Tree tr, Name nodeName)
     if (strcmp(nodeName, "..") == 0)
         return tr->parent;
 
-    /* navigate the nodes in tr folder */
-    Tree child;
-    for (int i = 0; i != tr->in->size; ++i)
-    {
-        child = tr->in->content.folder[i];
-
-        /* compare the found and original name */
-        if (strcmp(child->name, nodeName) == 0)
-            return child;
-    }
+    /* search fo the child file */
+    Tree child = searchTrie(tr->in->content.folder, nodeName);
+    if (child != NULL)
+        return child;
+    
     /* if the name is not found, tr remains the same */
     return tr;
 }
 
-/* find the root of a tree */
 Tree findRoot(Tree tr)
 {
     /* case tr is the root */
@@ -104,7 +102,6 @@ Tree findRoot(Tree tr)
     return findRoot(tr->parent);
 }
 
-/* free a tree */
 void freeTree(Tree tr)
 {
     if (tr == NULL)
@@ -112,22 +109,6 @@ void freeTree(Tree tr)
     
     /* free the inode */
     freeNode(tr->in);
-
-    /* delete tr from the parent's child array */
-    Tree parent = tr->parent;
-    if (parent != tr)
-    {
-        /* find the index of tr in it's parent's child array */
-        int idx;
-        for (idx = 0; idx != parent->in->size; ++idx)
-            if (parent->in->content.folder[idx] == tr)
-                break;
-
-        /* remove tr from the parent's child array */
-        --(parent->in->size);
-        for (int chd = idx; chd != parent->in->size; ++chd)
-            parent->in->content.folder[chd] = parent->in->content.folder[chd + 1];
-    }
 
     /* free the tree */
     free(tr);
@@ -144,17 +125,11 @@ void freeNode(Inode *in)
     /* free the node only if the reference count has reached 0 */
     if (in->refCount == 0)
     {
-        /* free a file */
+        /* free the content */
         if (in->type == File)
             free(in->content.file);
-
-        /* recursively free a folder */
         else
-        {
-            for (int i = 0; i != in->size; ++i)
-                freeTree(in->content.folder[i]);
-            free(in->content.folder);
-        }
+            freeTrie(in->content.folder);
 
         /* free the inode */
         free(in);

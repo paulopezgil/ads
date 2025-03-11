@@ -24,9 +24,13 @@ void ls(Tree tr, Path pt)
     if (pt.size != 0)
         cd(&tr, pt);
 
+    /* Obtain tr's child list */
+    int size = 0;
+    Tree *children = childList(tr->in->content.folder, &size);
+
     /* print the name of it's childs */
-    for (int idx = 0; idx != tr->in->size; ++idx)
-        printf("%s\n", tr->in->content.folder[idx]->name);
+    for (int idx = 0; idx != size; ++idx)
+        printf("%s\n", children[idx]->name);
 }
 
 void cat(Tree tr, Path pt)
@@ -42,11 +46,13 @@ void cat(Tree tr, Path pt)
 /* helper function for find */
 void printContent(Tree tr, Path pt)
 {
-    /* visit all childs of tr */
-    for(int chd = 0; chd != tr->in->size; ++chd)
-    {
-        Tree child = tr->in->content.folder[chd];
+    /* Obtain tr's child list */
+    int size = 0;
+    Tree *children = childList(tr->in->content.folder, &size);
 
+    /* visit all childs of tr */
+    for(int chd = 0; chd != size; ++chd)
+    {
         /* create and print the new path for each child of tr */
         Path childPath = createPath(pt.size + 1);
         for(int idx = 0; idx != pt.size; ++idx)
@@ -54,12 +60,12 @@ void printContent(Tree tr, Path pt)
             strcpy(childPath.name[idx], pt.name[idx]);
             printf("%s/", pt.name[idx]);
         }
-        strcpy(childPath.name[pt.size], child->name);
-        printf("%s\n", child->name);
+        strcpy(childPath.name[pt.size], children[chd]->name);
+        printf("%s\n", children[chd]->name);
 
         /* if the child is a folder, apply recursion */
-        if (child->in->type == Folder)
-            printContent(child, childPath);
+        if (children[chd]->in->type == Folder)
+            printContent(children[chd], childPath);
 
         /* free the child path */
         freePath(childPath);

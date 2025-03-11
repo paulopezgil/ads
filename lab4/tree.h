@@ -22,14 +22,13 @@ typedef enum InodeType {
 } InodeType;
 
 typedef union InodeContent {
-    Tree *folder;   /* an array of child nodes */
+    Trie folder;    /* a trie of child nodes  */
     char *file;     /* an array of characters */
 } InodeContent;
 
 typedef struct Inode {
     InodeType type;
     InodeContent content;
-    Trie childs;    /* helper data structure to quickly search for childs */
     int size;
     int refCount;
 } Inode;
@@ -40,15 +39,31 @@ typedef struct TreeNode {
     Inode *in;    
 } TreeNode;
 
-/* functions in tree.c */
+/* create a copy of a Tree at an existing Tree of the same type */
 void copyTree(Tree origin, Tree destination);
+
+/* obtain a list with the childs of tr and the number of them */
+Tree *childList(Trie tr, int *size);
+
+/* create the root node */
 Tree createRoot();
+
+/* create a tree on a given folder */
 Tree createTree(Tree parent, Name name, InodeType type);
-void deleteChild(Tree tr);
+
+/* go to node nodeName from folder tr */
 Tree findNode(Tree tr, Name nodeName);
+
+/* find the root of a tree */
 Tree findRoot(Tree tr);
+
+/* free a tree */
 void freeTree(Tree root);
+
+/* free a node */
 void freeNode(Inode *in);
+
+/* swap the inodes of two trees */
 void swapContent(Tree tr1, Tree tr2);
 
 #endif
