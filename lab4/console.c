@@ -1,6 +1,6 @@
 #include "console.ih"
 
-void (*execute[12])(Tree *) = {
+int (*execute[12])(Tree *) = {
     callExit,
     callCd,
     callLs,
@@ -15,9 +15,9 @@ void (*execute[12])(Tree *) = {
     callLn
 };
 
-void executeCommand(char *name, Tree *dir)
+int executeCommand(char *name, Tree *dir)
 {
-    execute[getCommandId(name)](dir);
+    return execute[getCommandId(name)](dir);
 }
 
 /**********************************************************************\
@@ -80,47 +80,55 @@ int readString(char **str, char delimiter)
     /* turn the delimiter into a null terminator and return */
     (*str)[size] = '\0';
     return size + 1;
+    return 0;
 }
 
-void callExit(Tree *dir)
+int callExit(Tree *dir)
 {
     freeTree(findRoot(*dir));
-    exit(1);
+    return 1;
 }
 
-void callCd(Tree *dir)
+int callCd(Tree *dir)
 {
     Path pt = readPath();
     cd(dir, pt);
 
     /* free the path */
     freePath(pt);
+
+    return 0;
 }
 
-void callLs(Tree *dir)
+int callLs(Tree *dir)
 {
     Path pt = readPath();
     ls(*dir, pt);
 
     /* free the path */
     freePath(pt);
+
+    return 0;
 }
 
-void callCat(Tree *dir)
+int callCat(Tree *dir)
 {
     Path pt = readPath();
     cat(*dir, pt);
 
     /* free the path */
     freePath(pt);
+
+    return 0;
 }
 
-void callFind(Tree *dir)
+int callFind(Tree *dir)
 {
     find(*dir);
+    return 0;
 }
 
-void callTouch(Tree *dir)
+int callTouch(Tree *dir)
 {
     /* read the paths until '\n' is read */
     Path pt = readPath();
@@ -133,9 +141,11 @@ void callTouch(Tree *dir)
 
     /* free the path */
     freePath(pt);
+    
+    return 0;
 }
 
-void callEcho(Tree *dir)
+int callEcho(Tree *dir)
 {
     getchar();  /* skip ' ' */
     getchar();  /* skip " */
@@ -163,10 +173,12 @@ void callEcho(Tree *dir)
     /* free the data */
     free(content);
     freePath(pt);
+
+    return 0;
 }
 
 /* we assume that the -p flag is always given*/
-void callMkdir(Tree *dir)
+int callMkdir(Tree *dir)
 {   
     /* skip "-p "*/
     getchar();
@@ -184,9 +196,11 @@ void callMkdir(Tree *dir)
 
     /* free the path */
     freePath(pt);
+
+    return 0;
 }
 
-void callMv(Tree *dir)
+int callMv(Tree *dir)
 {
     Path pt1 = readPath();
     Path pt2 = readPath();
@@ -195,19 +209,21 @@ void callMv(Tree *dir)
     /* free the paths */
     freePath(pt1);
     freePath(pt2);
+
+    return 0;
 }
 
-void callCp(Tree *dir)
+int callCp(Tree *dir)
 {
-
+    return 0;
 }
 
-void callRm(Tree *dir)
+int callRm(Tree *dir)
 {
-
+    return 0;
 }
 
-void callLn(Tree *dir)
+int callLn(Tree *dir)
 {
-
+    return 0;
 }

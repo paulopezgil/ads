@@ -13,7 +13,7 @@ typedef struct TrieNode *Trie;
 
 typedef struct TrieNode {
     Tree file;
-    Trie child[MAX_CHAR];
+    Trie next[MAX_CHAR];
 } TrieNode;
 
 typedef enum InodeType {

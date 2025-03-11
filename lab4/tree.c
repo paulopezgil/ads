@@ -27,6 +27,31 @@ void copyTree(Tree origin, Tree destination)
     }
 }
 
+Inode *createInode(InodeType type)
+{
+    /* create the inode */
+    Inode *in = malloc(sizeof(Inode));
+    in->type = type;
+    in->refCount = 1;
+    
+    /* create a file */
+    if (type == File)
+    {
+        in->content.file = malloc(sizeof(char));
+        in->content.file[0] = '\0';
+        in->size = 1;
+    }
+
+    /* create a folder */
+    else
+    {
+        in->content.folder = createTrie();
+        in->size = 0;
+    }
+
+    return in;
+}
+
 Tree createRoot()
 {
     Name rootName = "/";
@@ -43,20 +68,7 @@ Tree createTree(Tree parent, Name name, InodeType type)
     strcpy(tr->name, name);
 
     /* create the Inode */
-    tr->in = malloc(sizeof(Inode));
-    if (type == File)
-    {
-        tr->in->content.file = malloc(sizeof(char));
-        tr->in->content.file[0] = '\0';
-        tr->in->size = 1;
-    }
-    else
-    {
-        tr->in->content.folder = createTrie();
-        tr->in->size = 0;
-    }
-    tr->in->type = type;
-    tr->in->refCount = 1;
+    tr->in = createInode(type);
 
     /* if a parent is specified, add tr to the parent's child trie */
     if (parent != NULL)

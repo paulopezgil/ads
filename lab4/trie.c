@@ -23,11 +23,11 @@ Tree *childList(Trie tr, int *size)
     /* process each child in the trie */
     for (int idx = 0; idx < MAX_CHAR; idx++)
     {
-        if (tr->child[idx] != NULL)
+        if (tr->next[idx] != NULL)
         {
             /* recursively obtain the childList of each child */
             int size2 = 0;
-            Tree *list2 = childList(tr->child[idx], &size2);
+            Tree *list2 = childList(tr->next[idx], &size2);
             
             if (size2 != 0)
             {
@@ -69,7 +69,7 @@ Trie createTrie()
     /* set default values */
     tr->file = NULL;
     for (int pos = 0; pos != MAX_CHAR; ++pos)
-        tr->child[pos] = NULL;
+        tr->next[pos] = NULL;
 
     /* return the trie */
     return tr;
@@ -87,11 +87,11 @@ void insertTrie(Trie tr, Tree file)
         }
 
         /* create the child if it doesn't exist */
-        if (tr->child[(int)file->name[pos]] == NULL)
-            tr->child[(int)file->name[pos]] = createTrie();
+        if (tr->next[(int)file->name[pos]] == NULL)
+            tr->next[(int)file->name[pos]] = createTrie();
 
         /* go to the next letter */
-        tr = tr->child[(int)file->name[pos]];
+        tr = tr->next[(int)file->name[pos]];
     }
 }
 
@@ -109,21 +109,26 @@ Tree searchTrie(Trie tr, Name name)
             return tr->file;
 
         /* go to the next letter */
-        tr = tr->child[(int)name[pos]];
+        tr = tr->next[(int)name[pos]];
     }
 
     /* at this point, the name wasn't found */
     return NULL;
 }
 
-void freeTrie(Trie root)
+void freeTrie(Trie tr)
 {
     /* base case: NULL pointer */
-    if (root == NULL)
+    if (tr == NULL)
         return;
 
-    /* recursively free the nodes */
+    /* free the file */
+    freeTree(tr->file);
+
+    /* recursively free the next nodes */
     for (int ch = 0; ch != MAX_CHAR; ++ch)
-        freeTrie(root->child[(int)ch]);
-    free(root);
+        freeTrie(tr->next[(int)ch]);
+
+    /* free the node */
+    free(tr);
 }

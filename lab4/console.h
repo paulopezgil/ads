@@ -2,6 +2,6 @@
 #define CONSOLE_H
 #include "tree.h"
 
-void executeCommand(char *name, Tree *dir);
+int executeCommand(char *name, Tree *dir);
 
 #endif

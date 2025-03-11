@@ -30,10 +30,11 @@ int main()
 
     /* read all the commands until exit is read */
     char name[6];
-    while (1)
+    int stop = 0;
+    while (!stop)
     {
         /* read and execute each command */
         scanf("%s", name);
-        executeCommand(name, &currentDir);
+        stop = executeCommand(name, &currentDir);
     } 
 }

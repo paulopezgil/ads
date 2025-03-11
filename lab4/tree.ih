@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* functions in tree.c */
+Inode *createInode(InodeType type);
+
 /* functions in trie.c */
 Trie createTrie();
 void insertTrie(Trie tr, Tree file);

@@ -31,6 +31,9 @@ void ls(Tree tr, Path pt)
     /* print the name of it's childs */
     for (int idx = 0; idx != size; ++idx)
         printf("%s\n", children[idx]->name);
+
+    /* free allocated memory */
+    free(children);
 }
 
 void cat(Tree tr, Path pt)
@@ -70,6 +73,9 @@ void printContent(Tree tr, Path pt)
         /* free the child path */
         freePath(childPath);
     }
+
+    /* free allocated memory */
+    free(children);
 }
 
 void find(Tree tr)
@@ -126,7 +132,6 @@ void echo(char *str, int size, Tree tr, Path pt, int override)
         strcat(tr->in->content.file, str);
         tr->in->size += size;
     }
-
 }
 
 void mkdir(Tree tr, Path pt)
