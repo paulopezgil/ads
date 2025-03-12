@@ -39,8 +39,8 @@ typedef struct TreeNode {
     Inode *in;    
 } TreeNode;
 
-/* create a copy of a Tree at an existing Tree of the same type */
-void copyTree(Tree origin, Tree destination);
+/* create a copy of a Tree in a destination folder */
+void copyTree(Tree file, Tree folder);
 
 /* obtain a list with the childs of tr and the number of them */
 Tree *childList(Trie tr, int *size);
@@ -53,6 +53,9 @@ Tree createTree(Tree parent, Name name, InodeType type);
 
 /* go to node nodeName from folder tr */
 Tree findNode(Tree tr, Name nodeName);
+
+/* free an inode */
+void freeNode(Inode *in);
 
 /* find the root of a tree */
 Tree findRoot(Tree tr);

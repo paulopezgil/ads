@@ -88,6 +88,26 @@ int readString(char **str, char delimiter)
     return 0;
 }
 
+/* skip the specified number of characters if they match the pattern */
+void skipString(char *pattern, int size)
+{
+    char read[size];
+
+    /* check if the expected pattern is found in stdin */
+    for(int idx = 0; idx != size; ++idx)
+    {    
+        read[idx] = getchar();
+
+        /* if the char is not the expected one, return the chars to stdin */
+        if (read[idx] != pattern[idx])
+        {
+            for(int pos = idx; pos != -1; --pos)
+                ungetc(read[pos], stdin);
+            break;
+        }
+    }
+}
+
 int callExit(Tree *dir)
 {
     freeTree(findRoot(*dir));
@@ -157,15 +177,15 @@ int callTouch(Tree *dir)
 
 int callEcho(Tree *dir)
 {
-    getchar();  /* skip ' ' */
-    getchar();  /* skip " */
+    /* skip ' "'*/
+    skipString(" \"", 2);
 
-    /* read the content of the string */
+    /* read the content of the stringing */
     char *content = NULL;
     int size = readString(&content, '"');
 
-    getchar();   /* skip ' ' */
-    getchar();   /* skip '>' */
+    /* skip ' >' */
+    skipString(" >", 2);
 
     /* deduce the mode of execution */
     int override = 1;
@@ -190,9 +210,7 @@ int callEcho(Tree *dir)
 int callMkdir(Tree *dir)
 {   
     /* skip " -p" */
-    getchar();
-    getchar();
-    getchar();
+    skipString(" -p", 3);
 
     /* read the paths until '\n' is read */
     Path pt = readPath();
@@ -217,12 +235,14 @@ int callMv(Tree *dir)
     /* free the paths and return */
     freePath(pt1);
     freePath(pt2);
-
     return 0;
 }
 
 int callCp(Tree *dir)
 {
+    /* skip ' -r' */
+    skipString(" -r", 3);
+
     Path pt1 = readPath();
     Path pt2 = readPath();
     cp(*dir, pt1, pt2);
@@ -230,25 +250,13 @@ int callCp(Tree *dir)
     /* free the paths and return */
     freePath(pt1);
     freePath(pt2);
-
     return 0;
 }
 
 int callRm(Tree *dir)
 {
-    /* check for " -r" */
-    char read[3];
-    char expected[4] = " -r";
-    for(int idx = 0; idx != 3; ++idx)
-    {    
-        read[idx] = getchar();
-        if (read[idx] != expected[idx])
-        {
-            for(int pos = idx; pos != -1; --pos)
-                ungetc(read[pos], stdin);
-            break;
-        }
-    }
+    /* skip ' -r' */
+    skipString(" -r", 3);
 
     /* read the paths until '\n' is read */
     Path pt = readPath();
@@ -273,6 +281,5 @@ int callLn(Tree *dir)
     /* free the paths and return */
     freePath(pt1);
     freePath(pt2);
-
     return 0;
 }

@@ -23,6 +23,7 @@ typedef enum Commands {
 
 int getCommandId(char *name);
 int readString(char **str, char delimiter);
+void skipString(char *pattern, int size);
 int callExit(Tree *dir);
 int callCd(Tree *dir);
 int callLs(Tree *dir);

@@ -2,29 +2,59 @@
 
 void copyTree(Tree origin, Tree destination)
 {
-    /* override the destination if origin is a file */
+    /* if origin is a file, copy it's contents to destination */
     if (origin->in->type == File)
     {
+        /* delete the original content */
         free(destination->in->content.file);
-        destination->in->content.file = malloc(origin->in->size * sizeof(char));
-        strcpy(destination->in->content.file, origin->in->content.file);
+
+        /* copy the content of origin */
         destination->in->size = origin->in->size;
-        return;
+        destination->in->content.file = malloc(destination->in->size * sizeof(char));
+        strcpy(destination->in->content.file, origin->in->content.file);
     }
 
     /* if origin is a folder, obtain it's child list */
-    int size = 0;
-    Tree *children = childList(origin->in->content.folder, &size);
-
-    /* copy the children of origin to destination */
-    if (children != NULL)
+    else
     {
-        for(int idx = 0; idx != size; ++idx)
-            copyTree(children[idx], createTree(destination,
-                                            children[idx]->name,
-                                            children[idx]->in->type));
-        free(children);
+        int size = 0;
+        Tree *children = childList(origin->in->content.folder, &size);
+
+        /* copy the children of origin to destination */
+        if (children != NULL)
+        {
+            for(int idx = 0; idx != size; ++idx)
+                copyTree(children[idx], createTree(destination,
+                                                children[idx]->name,
+                                                children[idx]->in->type));
+            free(children);
+        }
     }
+}
+
+Inode *createInode(InodeType type)
+{
+    /* create the inode */
+    Inode *in = malloc(sizeof(Inode));
+    in->type = type;
+    in->refCount = 1;
+    
+    /* create a file */
+    if (type == File)
+    {
+        in->content.file = malloc(sizeof(char));
+        in->content.file[0] = '\0';
+        in->size = 1;
+    }
+
+    /* create a folder */
+    else
+    {
+        in->content.folder = createTrie();
+        in->size = 0;
+    }
+
+    return in;
 }
 
 Tree createRoot()
@@ -89,6 +119,28 @@ Tree findRoot(Tree tr)
     return findRoot(tr->parent);
 }
 
+void freeNode(Inode *in)
+{
+    if (in == NULL)
+        return;
+
+    /* decrease the reference count */
+    --(in->refCount);
+
+    /* free the node only if the reference count has reached 0 */
+    if (in->refCount == 0)
+    {
+        /* free the content */
+        if (in->type == File)
+            free(in->content.file);
+        else
+            freeTrie(in->content.folder);
+
+        /* free the inode */
+        free(in);
+    }
+}
+
 void freeTree(Tree tr)
 {
     if (tr == NULL)
@@ -111,11 +163,13 @@ void removeFile(Tree folder, Name name)
         if (tr == NULL)
             return;
 
-        /* if null-terminator is read, the name was found */
+        /* if null-terminator is read, the name could be in the trie */
         if (name[pos] == '\0')
         {
             freeTree(tr->file);
             tr->file = NULL;
+            folder->in->size--;
+            break;
         }
 
         /* go to the next letter */
@@ -128,51 +182,30 @@ void swapContent(Tree tr1, Tree tr2)
     Inode *aux = tr1->in;
     tr1->in = tr2->in;
     tr2->in = aux;
-}
 
-Inode *createInode(InodeType type)
-{
-    /* create the inode */
-    Inode *in = malloc(sizeof(Inode));
-    in->type = type;
-    in->refCount = 1;
+    /* for folders, update the parent pointers of all childs */
+    if (tr1->in->type == Folder)
+    {
+        /* obtain the files in the folder */
+        int size = 0;
+        Tree *children = childList(tr1->in->content.folder, &size);
+
+        /* Update parent pointers for all children */
+        for (int idx = 0; idx < size; idx++)
+            children[idx]->parent = tr1;
+        free(children);
+    }
     
-    /* create a file */
-    if (type == File)
+    /* for folders, update the parent pointers of all childs */
+    if (tr2->in->type == Folder)
     {
-        in->content.file = malloc(sizeof(char));
-        in->content.file[0] = '\0';
-        in->size = 1;
-    }
-
-    /* create a folder */
-    else
-    {
-        in->content.folder = createTrie();
-        in->size = 0;
-    }
-
-    return in;
-}
-
-void freeNode(Inode *in)
-{
-    if (in == NULL)
-        return;
-
-    /* decrease the reference count */
-    --(in->refCount);
-
-    /* free the node only if the reference count has reached 0 */
-    if (in->refCount == 0)
-    {
-        /* free the content */
-        if (in->type == File)
-            free(in->content.file);
-        else
-            freeTrie(in->content.folder);
-
-        /* free the inode */
-        free(in);
+        /* obtain the files in the folder */
+        int size = 0;
+        Tree *children = childList(tr2->in->content.folder, &size);
+        
+        /* Update parent pointers for all children */
+        for (int idx = 0; idx < size; idx++)
+            children[idx]->parent = tr2;
+        free(children);
     }
 }

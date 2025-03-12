@@ -132,13 +132,13 @@ void mv(Tree tr, Path pt1, Path pt2)
     cd(&dir2, pt2);
     
     /* if the file at pt2 doesn't exist, create it */
-    if (strcmp(dir1->name, dir2->name) != 0)
+    if (strcmp(dir1->name, dir2->name) != 0 || dir1->in->type != dir2->in->type)
         dir2 = createTree(dir2, pt2.name[pt2.size - 1], dir1->in->type);
     /* swap the content of the files at dir1 and dir2 */
     swapContent(dir1, dir2);
 
     /* delete dir1 */
-    freeTree(dir1);
+    removeFile(dir1->parent, dir1->name);
 }
 
 void cp(Tree tr, Path pt1, Path pt2)
@@ -148,11 +148,11 @@ void cp(Tree tr, Path pt1, Path pt2)
     cd(&dir1, pt1);
     cd(&dir2, pt2);
 
-    /* create dir2 except when overriding an existing non-directory file */
-    if (!(dir1->in->type == File && dir2->in->type == File))
-        createTree(dir2, dir1->name, dir1->in->type);
+    /* create the dir2 if it wasn't found */
+    if (dir2->in->type == Folder)
+        dir2 = createTree(dir2, pt2.name[pt2.size - 1], dir1->in->type);
 
-    /* call helper function to copy the file */
+    /* copy dir1 to dir2 */
     copyTree(dir1, dir2);
 }
 
@@ -167,5 +167,16 @@ void rm(Tree tr, Path pt)
 
 void ln(Tree tr, Path pt1, Path pt2)
 {
+    /* go to the specified addresses */
+    Tree dir1 = tr, dir2 = tr;
+    cd(&dir1, pt1);
+    cd(&dir2, pt2);
 
+    /* create the hard linked file without inode at pt2 */
+    dir2 = createTree(dir2, pt2.name[pt2.size - 1], File);
+    freeNode(dir2->in);
+
+    /* assign the inode of dir1 to dir2 and increase the reference count */
+    dir2->in = dir1->in;
+    ++(dir1->in->refCount);
 }
