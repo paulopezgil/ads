@@ -236,10 +236,19 @@ int callCp(Tree *dir)
 
 int callRm(Tree *dir)
 {
-    /* skip " -r" */
-    getchar();
-    getchar();
-    getchar();
+    /* check for " -r" */
+    char read[3];
+    char expected[4] = " -r";
+    for(int idx = 0; idx != 3; ++idx)
+    {    
+        read[idx] = getchar();
+        if (read[idx] != expected[idx])
+        {
+            for(int pos = idx; pos != -1; --pos)
+                ungetc(read[pos], stdin);
+            break;
+        }
+    }
 
     /* read the paths until '\n' is read */
     Path pt = readPath();
