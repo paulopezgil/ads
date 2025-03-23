@@ -1,8 +1,7 @@
 Graph readInput()
 {
-    int nChambers, nTunnels;
-
     /* read the first line and create the graph */
+    int nChambers, nTunnels;
     scanf("%d %d", &nChambers, &nTunnels);
     Graph G = createGraph(nChambers);
 
