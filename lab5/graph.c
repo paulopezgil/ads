@@ -1,47 +1,62 @@
 #include "graph.h"
+#include <stdlib.h>
+#include <limits.h>
 
-EdgeList createEdgeList()
+void addList(ListPtr *ptr, int node, int weight)
 {
-    EdgeList list;
-
-    /* set default values */
-    list.size = 0;
-    list.capacity = 1;
-    list.vertex = malloc(sizeof(Edge));
-
-    return list;
-}
-
-Graph createGraph(int nChambers)
-{
-    /* added an extra space because the first node is 1 and not 0 */
-    Graph G = malloc((nChambers + 1) * sizeof(Node));
-
-    /* initialize the EdgeLists */
-    G->parents = createEdgeList();
-    G->children = createEdgeList();
-}
-
-void addVertex(EdgeList *list, int id, int weight)
-{
-    /* double the capacity if necessary */
-    if (list->size == list->capacity)
+    /* traverse the list */
+    ListPtr previous = *ptr, next = *ptr;
+    while (next != NULL)
     {
-        list->capacity *= 2;
-        list->vertex = realloc(list->vertex, list->capacity);
+        previous = next;
+        next = previous->next;
     }
 
-    /* add the vertex to the list */
-    list->vertex[list->size].id = id;
-    list->vertex[list->size].weight = weight;
-    ++(list->size);
+    /* create the next list node */
+    next = malloc(sizeof(List));
+    next->node = node;
+    next->weight = weight;
+    next->next = NULL;
+
+    /* add it after the previous list node */
+    if (previous != NULL)
+        previous->next = next;
+
+    /* if the list is empty set the next node as the first */
+    else
+        *ptr = next;
 }
 
-void addEdge(Graph G, int parent, int child, int weight)
+void addChild(Graph G, int size, int parent, int child, int weight)
 {
-    /* add the child to parent's children list */
-    addVertex(&(G[parent].children), child, weight);
+    /* add child to parent's children list */
+    addList(&(G[parent].children), child, weight);
+    ++(G[parent].nChilds);
 
-    /* add parent to child's parent list */
-    addVertex(&(G[child].parents), parent, weight);
+    /* add parent to child's children list in the reversed graph */
+    addList(&(G[child + size].children), parent + size, weight);
+    ++(G[child + size].nChilds);
+}
+
+void addReverseButton(Graph G, int size, int node)
+{
+    /* add a tunnel with weight 0 between the same node in the 2 graphs */
+    addList(&(G[node].children), node + size, 0);
+    addList(&(G[node + size].children), node, 0);
+    ++(G[node].nChilds);
+    ++(G[node + size].nChilds);
+}
+
+Graph createGraph(int size)
+{
+    /* added an extra space because the first node is 1 and not 0 */
+    /* nodes from 1 to size are the nodes from the normal graph */
+    /* The next nodes are from the graph with the paths in reverse order */
+    Graph G = calloc(2 * size + 1, sizeof(Node));
+
+    /* initialize all distances to infinity except for node 1 */
+    for (int node = 2; node <= 2 * size; ++node)
+        G[node].pdistance = INT_MAX;
+
+    return G;
 }

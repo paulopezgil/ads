@@ -1,19 +1,19 @@
-#include "solver.h"
 #include <stdio.h>
 
-Graph readInput()
+void readInput()
 {
     /* read the first line and create the graph */
     int nChambers, nTunnels;
     scanf("%d %d", &nChambers, &nTunnels);
-    Graph G = createGraph(nChambers);
+    /* Graph G = createGraph(nChambers); */
+    printf("Created Graph with %d chambers\n", nChambers);
 
     /* read the chambers with a reverse button */
     int readNum = 0;
     scanf("%d", &readNum);
     while (readNum != -1)
     {
-        addReverseButton(G, nChambers, readNum);
+        printf("Chamber %d is reversible\n", readNum);
         scanf("%d", &readNum);
     }
 
@@ -22,19 +22,11 @@ Graph readInput()
     for (int idx = 0; idx != nTunnels; ++idx)
     {
         scanf("%d %d %d", &parent, &child, &weight);
-        addChild(G, nChambers, parent, child, weight);
+        printf("Adding edge from %d to %d with weight %d\n", parent, child, weight);
     }
-
-    return G;
 }
 
-void calcSolution(Graph G)
+int main()
 {
-
-}
-
-void printSolution(Graph G)
-{
-    calcSolution(G);
-
+    readInput();
 }
