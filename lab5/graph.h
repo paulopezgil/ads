@@ -11,7 +11,6 @@ typedef struct List {
 typedef struct Node *Graph;
 typedef struct Node {
     ListPtr children;
-    int nChilds;
     int parent;
     int pdistance;
 } Node;

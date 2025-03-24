@@ -31,11 +31,9 @@ void addChild(Graph G, int size, int parent, int child, int weight)
 {
     /* add child to parent's children list */
     addList(&(G[parent].children), child, weight);
-    ++(G[parent].nChilds);
 
     /* add parent to child's children list in the reversed graph */
     addList(&(G[child + size].children), parent + size, weight);
-    ++(G[child + size].nChilds);
 }
 
 void addReverseButton(Graph G, int size, int node)
@@ -43,8 +41,6 @@ void addReverseButton(Graph G, int size, int node)
     /* add a tunnel with weight 0 between the same node in the 2 graphs */
     addList(&(G[node].children), node + size, 0);
     addList(&(G[node + size].children), node, 0);
-    ++(G[node].nChilds);
-    ++(G[node + size].nChilds);
 }
 
 Graph createGraph(int size)
