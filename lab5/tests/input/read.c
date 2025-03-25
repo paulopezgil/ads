@@ -1,6 +1,10 @@
 #include "../../solver.h"
 #include <stdio.h>
 
+/* 
+    the test was created before readInput was a void function, the main
+    functionality is the same.
+*/
 int main()
 {
     /* read the first line and create the graph */

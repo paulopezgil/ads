@@ -49,7 +49,7 @@ HeapNode removeMin(Heap *hp)
 
     /* restore the order of the heap if it's not empty */
     if (!isEmptyHeap(*hp))
-        downHeap(hp, 1);
+        downHeap(hp, hp->array[1].id);
 
     return min;
 }
@@ -93,21 +93,23 @@ void downHeap(Heap *hp, int node)
     if (posLeftChild < hp->front &&
         hp->array[posLeftChild].dist < hp->array[posSmallest].dist)
         posSmallest = posLeftChild;
-    if (posLeftChild < hp->front &&
+    if (posRightChild < hp->front &&
         hp->array[posRightChild].dist < hp->array[posSmallest].dist)
         posSmallest = posRightChild;
     
     /* update the heap with the found smallest child */
     if (posSmallest != posNode)
-    {            
+    {        
+        int smallest = hp->array[posSmallest].id;
+
         /* swap the nodes at posSmallest and posNode */
         HeapNode auxNode = hp->array[posNode];
         hp->array[posNode] = hp->array[posSmallest];
         hp->array[posSmallest] = auxNode;
 
         /* swap node's and smallest's child position index */
-        hp->position[hp->array[posNode].id] = posSmallest;
-        hp->position[hp->array[posSmallest].id] = posNode;
+        hp->position[node] = posSmallest;
+        hp->position[smallest] = posNode;
 
         /* recursively update the node's position */
         downHeap(hp, node);
