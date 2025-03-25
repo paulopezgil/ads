@@ -3,7 +3,6 @@
 #include "graph.h"
 
 Graph readInput();
-void calcSolution(Graph G);
 void printSolution(Graph G);
 
 #endif

@@ -48,11 +48,5 @@ Graph createGraph(int size)
     /* added an extra space because the first node is 1 and not 0 */
     /* nodes from 1 to size are the nodes from the normal graph */
     /* The next nodes are from the graph with the paths in reverse order */
-    Graph G = calloc(2 * size + 1, sizeof(Node));
-
-    /* initialize all distances to infinity except for node 1 */
-    for (int node = 2; node <= 2 * size; ++node)
-        G[node].pdistance = INT_MAX;
-
-    return G;
+    return calloc(2 * size + 1, sizeof(Node));
 }

@@ -12,7 +12,7 @@ typedef struct Node *Graph;
 typedef struct Node {
     ListPtr children;
     int parent;
-    int pdistance;
+    int dist;
 } Node;
 
 Graph createGraph(int nChambers);
