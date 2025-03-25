@@ -15,8 +15,9 @@ typedef struct Node {
     int dist;
 } Node;
 
-Graph createGraph(int nChambers);
+Graph createGraph(int size);
 void addChild(Graph G, int size, int parent, int child, int weight);
 void addReverseButton(Graph G, int size, int node);
+void freeGraph(Graph G, int size);
 
 #endif

@@ -9,4 +9,7 @@ int main()
 
     /* print the shortest path from node 1 to n */
     printSolution(G, nChambers);
+
+    /* free the allocated memory */
+    freeGraph(G, nChambers);
 }

@@ -69,8 +69,71 @@ void dijkstra(Graph G, int nChambers)
     freeHeap(hp);
 }
 
+void printParents(Graph G, int currentNode, int nChambers)
+{
+    int parent = G[currentNode].parent;
+    int pressedReverse = parent % nChambers == currentNode % nChambers;
+
+    /* end recursion at node 1 */
+    if (currentNode == 1)
+    {
+        printf("%d\n", currentNode);
+        return;
+    }
+
+    /* if the parent is the same node, then a reverse button was pressed */
+    if (pressedReverse)
+        parent = G[parent].parent;
+
+    /* first print the grandparents */
+    printParents(G, parent, nChambers);
+
+    /* Then print the parent */
+    printf("%d", currentNode % nChambers);
+
+    /* if the reverse button was pressed, print a 'R' */
+    if (pressedReverse)
+        printf(" R");
+    
+    printf("\n");
+}
+
 void printSolution(Graph G, int nChambers)
 {
     /* run dijkstra to find the shortest path from node 1 to the others */
     dijkstra(G, nChambers);
+
+    /* first, we handle the case where the distance is equal between node n and 2n */
+    int lastNode;
+    if (G[nChambers].dist == G[2 * nChambers].dist)
+    {
+        /* If both distances are infinity, no path was found from node 1 to n */
+        if (G[nChambers].dist == INT_MAX)
+        {
+            printf("IMPOSSIBLE");
+            return;
+        }
+
+        /* Otherwise, node n has a reverse button. */
+        /* We need to find the graph in which it was found (the normal or the reversed). */
+        if (G[nChambers].parent == 2 * nChambers)
+            lastNode = 2 * nChambers;
+        else
+            lastNode = nChambers;
+    }
+    else
+    {
+        /* Otherwise, check if it's better to go from 1 to n or to 2n */
+        if (G[nChambers].dist < G[2 * nChambers].dist)
+            lastNode = nChambers;
+        else
+            lastNode = 2 * nChambers;
+    }
+
+    /* print the distance from node 1 to n */
+    printf("%d\n", G[lastNode].dist);
+
+    /* print the path */
+    printParents(G, G[lastNode].parent, nChambers);
+    printf("%d", lastNode);
 }

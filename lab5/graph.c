@@ -50,3 +50,22 @@ Graph createGraph(int size)
     /* The next nodes are from the graph with the paths in reverse order */
     return calloc(2 * size + 1, sizeof(Node));
 }
+
+void freeList(ListPtr ptr)
+{
+    if (ptr == NULL)
+        return;
+
+    freeList(ptr->next);
+    free(ptr);
+}
+
+void freeGraph(Graph G, int size)
+{
+    /* first free the children lists */
+    for (int node = 0; node != 2 * size + 1; ++node)
+        freeList(G[node].children);
+
+    /* then free the graph */
+    free(G);
+}
