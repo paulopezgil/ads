@@ -46,6 +46,10 @@ void dijkstra(Graph G, int nChambers)
         /* remove the node with the minimum distance in the heap*/
         HeapNode min = removeMin(&hp);
 
+        /* if min.dist == INT_MAX, the remaining nodes are not reachable */
+        if (min.dist == INT_MAX)
+            break;
+
         /* recompute the distances of the children of min */
         for (ListPtr ptr = G[min.id].children; ptr != NULL; ptr = ptr->next)
         {
@@ -74,19 +78,13 @@ void printParents(Graph G, int currentNode, int nChambers)
     int parent = G[currentNode].parent;
     int pressedReverse = parent % nChambers == currentNode % nChambers;
 
-    /* end recursion at node 1 */
-    if (currentNode == 1)
-    {
-        printf("%d\n", currentNode);
-        return;
-    }
-
     /* if the parent is the same node, then a reverse button was pressed */
     if (pressedReverse)
         parent = G[parent].parent;
 
     /* first print the grandparents */
-    printParents(G, parent, nChambers);
+    if (currentNode % nChambers != 1)
+        printParents(G, parent, nChambers);
 
     /* Then print the parent */
     printf("%d", currentNode % nChambers);
