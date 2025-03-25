@@ -1,5 +1,5 @@
 #include "heap.h"
-#include <limits.h>
+#include <stdlib.h>
 
 void addHeap(Heap *hp, int node, int dist)
 {
@@ -57,24 +57,24 @@ HeapNode removeMin(Heap *hp)
 void upHeap(Heap *hp, int node)
 {
     /* check if node is the root */
-    int positionNode = hp->position[node];
-    if (positionNode != 1)
+    int posNode = hp->position[node];
+    if (posNode != 1)
     {
         /* obtain the parent node and it's position in the heap array */
-        int positionParent = positionNode / 2;
-        int parent = hp->array[positionParent].id;
+        int posParent = posNode / 2;
+        int parent = hp->array[posParent].id;
 
         /* compare the node with it's parent */
-        if (hp->array[positionNode].dist < hp->array[positionParent].dist)
+        if (hp->array[posNode].dist < hp->array[posParent].dist)
         {
-            /* swap the nodes at positionNode and positionParent */
-            HeapNode auxNode = hp->array[positionNode];
-            hp->array[positionNode] = hp->array[positionParent];
-            hp->array[positionParent] = auxNode;
+            /* swap the nodes at posNode and posParent */
+            HeapNode auxNode = hp->array[posNode];
+            hp->array[posNode] = hp->array[posParent];
+            hp->array[posParent] = auxNode;
 
             /* swap node's and parent's position index */
-            hp->position[node] = positionParent;
-            hp->position[parent] = positionNode;
+            hp->position[node] = posParent;
+            hp->position[parent] = posNode;
 
             /* call upHead recursively */
             upHeap(hp, node);
@@ -84,5 +84,38 @@ void upHeap(Heap *hp, int node)
 
 void downHeap(Heap *hp, int node)
 {
+    int posNode = hp->position[node];
+    int posLeftChild = 2 * posNode;
+    int posRightChild = 2 * posNode + 1;
+
+    /* find the smallest dist between the node and it's childs */
+    int posSmallest = posNode;
+    if (posLeftChild < hp->front &&
+        hp->array[posLeftChild].dist < hp->array[posSmallest].dist)
+        posSmallest = posLeftChild;
+    if (posLeftChild < hp->front &&
+        hp->array[posRightChild].dist < hp->array[posSmallest].dist)
+        posSmallest = posRightChild;
     
+    /* update the heap with the found smallest child */
+    if (posSmallest != posNode)
+    {            
+        /* swap the nodes at posSmallest and posNode */
+        HeapNode auxNode = hp->array[posNode];
+        hp->array[posNode] = hp->array[posSmallest];
+        hp->array[posSmallest] = auxNode;
+
+        /* swap node's and smallest's child position index */
+        hp->position[hp->array[posNode].id] = posSmallest;
+        hp->position[hp->array[posSmallest].id] = posNode;
+
+        /* recursively update the node's position */
+        downHeap(hp, node);
+    }
+}
+
+void freeHeap(Heap hp)
+{
+    free(hp.array);
+    free(hp.position);
 }

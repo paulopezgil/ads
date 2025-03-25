@@ -3,8 +3,10 @@
 int main()
 {
     /* read the input according to themis format */
-    Graph G = readInput();
+    Graph G;
+    int nChambers;
+    readInput(&G, &nChambers);
 
     /* print the shortest path from node 1 to n */
-    printSolution(G);
+    printSolution(G, nChambers);
 }

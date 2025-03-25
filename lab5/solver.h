@@ -2,7 +2,7 @@
 #define SOLVER_H
 #include "graph.h"
 
-Graph readInput();
-void printSolution(Graph G);
+void readInput(Graph *G, int *nChambers);
+void printSolution(Graph G, int nChambers);
 
 #endif

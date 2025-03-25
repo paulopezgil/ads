@@ -1,5 +1,7 @@
 #include "solver.h"
+#include "heap.h"
 #include <stdio.h>
+#include <limits.h>
 
 void readInput(Graph *G, int *nChambers)
 {
