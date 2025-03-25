@@ -11,6 +11,7 @@ typedef struct List {
 typedef struct Node *Graph;
 typedef struct Node {
     ListPtr children;
+    ListPtr lastChild;  /* used for quickly adding new children */
     int parent;
     int dist;
 } Node;

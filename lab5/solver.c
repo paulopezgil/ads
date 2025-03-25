@@ -133,5 +133,5 @@ void printSolution(Graph G, int nChambers)
 
     /* print the path */
     printParents(G, G[lastNode].parent, nChambers);
-    printf("%d", lastNode);
+    printf("%d", nChambers);
 }

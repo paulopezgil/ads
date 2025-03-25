@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 /* 
-    the test was created before readInput was a void function, the main
-    functionality is the same.
+    the test was created before readInput was a void function,
+    but the functionality is the same.
 */
 int main()
 {
